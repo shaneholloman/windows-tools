@@ -133,6 +133,39 @@ Then in `my-tool.bat` use `%EXEDIR%` instead of `%~dp0` to find co-located binar
 | `backup-phone` | CLI | Backs up Android phone over ADB |
 | `all-hands` | CLI | Launches OpenHands AI coding agent via Docker |
 | Scale Monitor 4 | Taskbar | Toggles Monitor 4 (HG584T05) between 200% (normal) and 300% (filming) |
+| Task Monitor | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
+
+---
+
+## taskmon — taskbar system monitor
+
+![taskmon screenshot](taskmon/screenshots/ss1.png)
+
+Displays live performance stats as sparkline graphs on the right side of the
+Windows taskbar, sitting just to the left of the system clock.
+
+**Panels:** UPLOAD · DOWNLOAD · CPU · GPU (util % + temp °C) · MEM %
+
+**Features:**
+- Transparent background — graphs float on the taskbar, no dark box
+- Per-core XMeters-style CPU grid (toggle in Settings) or aggregate sparkline
+- GPU monitoring via NVML — no `nvidia-smi` subprocess, <0.1% CPU overhead
+- Customisable colours, update interval, and opacity via right-click → Settings
+- Settings saved to `%LOCALAPPDATA%\taskmon\settings.json`
+
+**Dev workflow** (all from `taskmon\`):
+
+```bat
+build-and-run.bat   # kill existing + compile + launch  (use this after every change)
+kill.bat            # just kill the running instance
+build.bat           # kill + compile only (no launch)
+```
+
+Compiled output goes to `%LOCALAPPDATA%\taskmon\taskmon.dll` (not in git).
+First build takes ~5 seconds; subsequent builds are the same (no incremental cache).
+
+**To pin to taskbar:** run `install.ps1` once, then right-click
+`C:\dev\tools\Task Monitor.lnk` → Pin to taskbar.
 
 ---
 
