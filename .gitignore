@@ -1,0 +1,11 @@
+# Large binaries live in c:\dev\tools, not here
+*.exe
+*.dll
+
+# Diagnostic / scratch files
+*-test.ps1
+
+# Editor / OS noise
+.vs/
+Thumbs.db
+desktop.ini
