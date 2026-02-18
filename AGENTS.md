@@ -110,6 +110,14 @@ mikes-windows-tools\
 │   ├── scale-monitor4.ps1     ← WinForms popup UI + registry toggle
 │   ├── scale-monitor4.vbs     ← silent launcher (no window flash)
 │   └── scale-monitor4.bat     ← thin bat wrapper (not used directly)
+├── taskmon\
+│   ├── taskmon.cs             ← full C# source (edit this)
+│   ├── taskmon.ps1            ← PS launcher: loads pre-built DLL, calls App::Run()
+│   ├── taskmon.vbs            ← silent launcher (no console window)
+│   ├── build.bat              ← compiles taskmon.cs → %LOCALAPPDATA%\taskmon\taskmon.dll
+│   ├── build-and-run.bat      ← kill + build + launch in one step (daily dev command)
+│   ├── kill.bat               ← kills running taskmon by command-line pattern
+│   └── deps.ps1               ← checks nvml.dll present (NVIDIA GPU monitoring)
 └── transcribe\
     ├── transcribe.bat         ← uses %EXEDIR% for ffmpeg / whisper paths
     └── deps.ps1               ← checks ffmpeg.exe + faster-whisper-xxl.exe exist
@@ -126,6 +134,62 @@ mikes-windows-tools\
 | `C:\dev\tools\ffmpeg.exe` | Used by transcribe |
 | `C:\dev\tools\faster-whisper-xxl.exe` | Used by transcribe |
 | `C:\dev\tools\_models\` | Whisper model files |
+
+---
+
+## taskmon specifics
+
+Replacement for TrafficMonitor / XMeters. Displays NET↑/↓, CPU, GPU, MEM as
+sparkline graphs on the right side of the Windows taskbar, positioned just to
+the LEFT of the system clock (detected via `TrayNotifyWnd`).
+
+### Architecture
+- **No .NET SDK required.** Compiled by `csc.exe` from .NET Framework 4
+  (`C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe`).
+- Compiled DLL is cached at `%LOCALAPPDATA%\taskmon\taskmon.dll`.
+- `taskmon.ps1` is a thin launcher — it loads the DLL and calls `[TaskMon.App]::Run()`.
+  No compilation at runtime, so startup is instant and no OOM risk in Cursor.
+
+### Dev workflow
+```
+cd taskmon
+.\build-and-run.bat    # kill old instance + compile + launch
+```
+After code changes to `taskmon.cs`, just re-run `build-and-run.bat`.
+
+### Key implementation details
+- `OverlayForm` is a frameless `WS_POPUP` + `HWND_TOPMOST` WinForms Form.
+- `TransparencyKey = BackColor` makes the dark background see-through so the
+  taskbar shows through. Only sparklines and text are visible.
+- Position: `TrayLeftEdge()` finds `Shell_TrayWnd → TrayNotifyWnd` via
+  `FindWindowEx` + `GetWindowRect` to know where the clock starts.
+- `StartPosition = Manual` is critical — without it, `Show()` overrides the
+  position set in the constructor.
+- Z-order: a 100 ms timer re-asserts `HWND_TOPMOST` + a `WM_WINDOWPOSCHANGED`
+  handler does it immediately on any z-order change.
+- GPU: NVML P/Invoke (`nvml.dll`) — no `nvidia-smi` subprocess.
+- CPU: `PerformanceCounter("Processor", "% Processor Time")` — aggregate +
+  per-core for the XMeters-style grid mode.
+- Settings: `%LOCALAPPDATA%\taskmon\settings.json` (richly commented JSON).
+  Right-click overlay → Settings to change via UI.
+
+### Known limitation
+In exclusive-fullscreen mode (rare — most modern games use borderless) the
+overlay may briefly disappear and return within ~100 ms. Windowed/borderless
+fullscreen is unaffected. The proper fix would be embedding as a `WS_CHILD` of
+`Shell_TrayWnd` (as TrafficMonitor does), but that requires a pure Win32
+window — WinForms Forms do not survive `SetParent` into the taskbar reliably.
+
+### Important paths for taskmon
+| Path | What it is |
+|---|---|
+| `taskmon\taskmon.cs` | C# source — edit this |
+| `taskmon\build.bat` | Compiles via `csc.exe`, kills old instance first |
+| `taskmon\build-and-run.bat` | Full dev cycle: kill + build + launch |
+| `taskmon\kill.bat` | Kills taskmon by matching `*taskmon.ps1*` in WMI |
+| `%LOCALAPPDATA%\taskmon\taskmon.dll` | Compiled output (not in git) |
+| `%LOCALAPPDATA%\taskmon\settings.json` | User settings (not in git) |
+| `C:\Windows\System32\nvml.dll` | NVIDIA GPU monitoring (ships with drivers) |
 
 ---
 

@@ -87,6 +87,20 @@ $sc.Save()
 Write-Host "  [lnk]  $shortcutPath" -ForegroundColor Green
 
 # ---------------------------------------------------------------------------
+# taskmon — taskbar system monitor shortcut (launched via VBS for no console window)
+# ---------------------------------------------------------------------------
+$tmVbsPath      = "$RepoDir\taskmon\taskmon.vbs"
+$tmShortcutPath = Join-Path $ToolsDir "Task Monitor.lnk"
+$tmSc           = $wsh.CreateShortcut($tmShortcutPath)
+$tmSc.TargetPath       = "wscript.exe"
+$tmSc.Arguments        = "`"$tmVbsPath`""
+$tmSc.WorkingDirectory = "$RepoDir\taskmon"
+$tmSc.Description      = "Taskbar system monitor: NET / CPU / GPU / MEM sparklines"
+$tmSc.IconLocation     = "%SystemRoot%\System32\imageres.dll,174"
+$tmSc.Save()
+Write-Host "  [lnk]  $tmShortcutPath" -ForegroundColor Green
+
+# ---------------------------------------------------------------------------
 # Dependencies — run each tool's deps.ps1 if present
 # ---------------------------------------------------------------------------
 if ($SkipDeps) {
@@ -114,3 +128,4 @@ Write-Host "To add a new tool: create its subfolder, then re-run install.ps1." -
 Write-Host "To skip dependency checks: install.ps1 -SkipDeps" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Reminder: right-click 'Scale Monitor 4.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
+Write-Host "Reminder: right-click 'Task Monitor.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
