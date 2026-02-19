@@ -169,6 +169,10 @@ First build takes ~5 seconds; subsequent builds are the same (no incremental cac
 **To pin to taskbar:** run `install.ps1` once, then right-click
 `C:\dev\tools\Task Monitor.lnk` → Pin to taskbar.
 
+**Known issue:** a 1–2 frame flicker when switching maximized apps. See
+[`taskmon/FLICKER-RESEARCH.md`](taskmon/FLICKER-RESEARCH.md) for investigation
+notes and potential fixes.
+
 ---
 
 ## Notes

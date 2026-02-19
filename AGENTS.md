@@ -173,12 +173,16 @@ After code changes to `taskmon.cs`, just re-run `build-and-run.bat`.
 - Settings: `%LOCALAPPDATA%\taskmon\settings.json` (richly commented JSON).
   Right-click overlay → Settings to change via UI.
 
-### Known limitation
-In exclusive-fullscreen mode (rare — most modern games use borderless) the
-overlay may briefly disappear and return within ~100 ms. Windowed/borderless
-fullscreen is unaffected. The proper fix would be embedding as a `WS_CHILD` of
-`Shell_TrayWnd` (as TrafficMonitor does), but that requires a pure Win32
-window — WinForms Forms do not survive `SetParent` into the taskbar reliably.
+### Known limitations
+- In exclusive-fullscreen mode (rare — most modern games use borderless) the
+  overlay may briefly disappear and return within ~100 ms.
+- A 1–2 frame flicker when switching between maximized apps. This is caused
+  by the overlay being a separate compositor surface from the taskbar. See
+  [`taskmon/FLICKER-RESEARCH.md`](taskmon/FLICKER-RESEARCH.md) for detailed
+  investigation notes and the approaches tried (DWM attributes,
+  WM_WINDOWPOSCHANGING interception, SetParent embedding). The proper fix
+  requires rewriting rendering from `UpdateLayeredWindow` to `WM_PAINT` +
+  `WS_CHILD` embedding into `Shell_TrayWnd`.
 
 ### Important paths for taskmon
 | Path | What it is |
