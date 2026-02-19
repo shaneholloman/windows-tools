@@ -99,6 +99,9 @@ mikes-windows-tools\
 ├── all-hands\
 │   ├── all-hands.bat
 │   └── deps.ps1               ← checks Docker is installed
+├── ghopen\
+│   ├── ghopen.bat             ← opens GitHub repo or PR page in browser
+│   └── deps.ps1               ← checks gh CLI (optional but recommended)
 ├── backup-phone\
 │   ├── backup-phone.bat
 │   ├── backup-phone.ps1

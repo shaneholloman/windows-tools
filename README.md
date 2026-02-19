@@ -133,9 +133,26 @@ Then in `my-tool.bat` use `%EXEDIR%` instead of `%~dp0` to find co-located binar
 | `removebg <image>` | CLI | Removes image background using rembg / birefnet-portrait |
 | `backup-phone` | CLI | Backs up Android phone over ADB |
 | `all-hands` | CLI | Launches OpenHands AI coding agent via Docker |
+| `ghopen` | CLI | Opens the current repo on GitHub; opens the PR page if on a PR branch |
 | Scale Monitor 4 | Taskbar | Toggles Monitor 4 (HG584T05) between 200% (normal) and 300% (filming) |
 | Task Monitor | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
 | Voice Type | Taskbar | Push-to-talk local voice transcription — hold Right Ctrl, speak, release to paste |
+
+---
+
+## ghopen — open repo or PR in browser
+
+Run `ghopen` from any directory inside a git repo to open it on GitHub. If the
+current branch has a pull request, it opens the PR page instead.
+
+Requires the [GitHub CLI](https://cli.github.com/) (`gh`) for full
+functionality (PR detection, subdirectory-aware links). Falls back to parsing
+the `origin` remote URL and opening the repo root if `gh` is not installed.
+
+```powershell
+cd C:\dev\myproject     # any git repo
+ghopen                  # opens PR if on a PR branch, otherwise opens repo
+```
 
 ---
 
