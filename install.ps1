@@ -21,8 +21,30 @@ $RepoDir  = Split-Path -Parent $MyInvocation.MyCommand.Path   # auto-resolved; m
 $ToolsDir = "C:\dev\tools"                                    # directory on your PATH
 
 if (-not (Test-Path $ToolsDir)) {
-    Write-Host "Error: ToolsDir '$ToolsDir' not found. Edit the `$ToolsDir variable in install.ps1." -ForegroundColor Red
-    exit 1
+    New-Item -ItemType Directory -Path $ToolsDir | Out-Null
+    Write-Host "Created $ToolsDir" -ForegroundColor Yellow
+}
+
+# ---------------------------------------------------------------------------
+# PATH check — warn and offer to fix if $ToolsDir is not on PATH
+# ---------------------------------------------------------------------------
+$machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine"); if (-not $machinePath) { $machinePath = "" }
+$userPath    = [System.Environment]::GetEnvironmentVariable("Path", "User");    if (-not $userPath)    { $userPath    = "" }
+$onPath      = ($machinePath -split ";") + ($userPath -split ";") |
+               Where-Object { $_.TrimEnd("\") -ieq $ToolsDir.TrimEnd("\") }
+
+if (-not $onPath) {
+    Write-Host ""
+    Write-Host "WARNING: '$ToolsDir' is not on your PATH." -ForegroundColor Yellow
+    $ans = Read-Host "  Add it to your User PATH now? [Y/n]"
+    if ($ans -eq "" -or $ans -imatch "^y") {
+        $newUserPath = ($userPath.TrimEnd(";") + ";$ToolsDir").TrimStart(";")
+        [System.Environment]::SetEnvironmentVariable("Path", $newUserPath, "User")
+        $env:PATH += ";$ToolsDir"
+        Write-Host "  Added '$ToolsDir' to User PATH. Open a new terminal to use the tools." -ForegroundColor Green
+    } else {
+        Write-Host "  Skipped. Add '$ToolsDir' to PATH manually to use the tools." -ForegroundColor DarkGray
+    }
 }
 
 Write-Host ""

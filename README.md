@@ -13,7 +13,8 @@ cd C:\dev\me\mikes-windows-tools
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
-Then make sure `C:\dev\tools` is on your `PATH` (it should already be).
+`install.ps1` checks whether `C:\dev\tools` is on your `PATH` and offers to
+add it automatically if not.
 
 ---
 
