@@ -111,10 +111,17 @@ mikes-windows-tools\
 │   ├── scale-monitor4.vbs     ← silent launcher (no window flash)
 │   └── scale-monitor4.bat     ← thin bat wrapper (not used directly)
 ├── taskmon\
-│   ├── taskmon.cs             ← full C# source (edit this)
+│   ├── taskmon.csproj         ← MSBuild project (no SDK needed)
+│   ├── Native.cs              ← Win32 P/Invoke + NVML declarations
+│   ├── Settings.cs            ← JSON-backed settings
+│   ├── Metrics.cs             ← CircularBuffer + PerformanceCounter/NVML sampling
+│   ├── OverlayForm.cs         ← layered window, rendering, hit-test, menu
+│   ├── SettingsForm.cs        ← tabbed settings dialog
+│   ├── App.cs                 ← DarkRenderer + App entry point
+│   ├── icons\                 ← famfamfam silk icons (CC BY 2.5) embedded as manifest resources
 │   ├── taskmon.ps1            ← PS launcher: loads pre-built DLL, calls App::Run()
 │   ├── taskmon.vbs            ← silent launcher (no console window)
-│   ├── build.bat              ← compiles taskmon.cs → %LOCALAPPDATA%\taskmon\taskmon.dll
+│   ├── build.bat              ← builds via MSBuild.exe → %LOCALAPPDATA%\taskmon\taskmon.dll
 │   ├── build-and-run.bat      ← kill + build + launch in one step (daily dev command)
 │   ├── kill.bat               ← kills running taskmon by command-line pattern
 │   └── deps.ps1               ← checks nvml.dll present (NVIDIA GPU monitoring)
@@ -143,9 +150,16 @@ Replacement for TrafficMonitor / XMeters. Displays NET↑/↓, CPU, GPU, MEM as
 sparkline graphs on the right side of the Windows taskbar, positioned just to
 the LEFT of the system clock (detected via `TrayNotifyWnd`).
 
+### Icons
+Right-click menu icons come from the **famfamfam silk icon set** (Mark James, CC BY 2.5).
+Source: https://www.famfamfam.com/lab/icons/silk/
+The PNGs live in `taskmon\icons\` and are embedded into the DLL as manifest resources via
+`<EmbeddedResource Include="icons\*.png" />` in `taskmon.csproj`.
+
 ### Architecture
-- **No .NET SDK required.** Compiled by `csc.exe` from .NET Framework 4
-  (`C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe`).
+- **No .NET SDK required.** Built by `MSBuild.exe` from .NET Framework 4
+  (`C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe`).
+- Project file: `taskmon\taskmon.csproj` (targets .NET Framework 4, embeds `icons\*.png` as manifest resources).
 - Compiled DLL is cached at `%LOCALAPPDATA%\taskmon\taskmon.dll`.
 - `taskmon.ps1` is a thin launcher — it loads the DLL and calls `[TaskMon.App]::Run()`.
   No compilation at runtime, so startup is instant and no OOM risk in Cursor.
@@ -155,7 +169,7 @@ the LEFT of the system clock (detected via `TrayNotifyWnd`).
 cd taskmon
 .\build-and-run.bat    # kill old instance + compile + launch
 ```
-After code changes to `taskmon.cs`, just re-run `build-and-run.bat`.
+After code changes to any `.cs` file, just re-run `build-and-run.bat`.
 
 ### Key implementation details
 - `OverlayForm` is a frameless `WS_POPUP` + `HWND_TOPMOST` WinForms Form.
@@ -187,8 +201,15 @@ After code changes to `taskmon.cs`, just re-run `build-and-run.bat`.
 ### Important paths for taskmon
 | Path | What it is |
 |---|---|
-| `taskmon\taskmon.cs` | C# source — edit this |
-| `taskmon\build.bat` | Compiles via `csc.exe`, kills old instance first |
+| `taskmon\taskmon.csproj` | MSBuild project file |
+| `taskmon\Native.cs` | Win32 P/Invoke + NVML declarations |
+| `taskmon\Settings.cs` | JSON-backed settings |
+| `taskmon\Metrics.cs` | CircularBuffer + PerformanceCounter/NVML sampling |
+| `taskmon\OverlayForm.cs` | Layered window rendering + hit-test + menu |
+| `taskmon\SettingsForm.cs` | Tabbed settings dialog |
+| `taskmon\App.cs` | DarkRenderer + App entry point |
+| `taskmon\icons\` | famfamfam silk icons — CC BY 2.5, https://www.famfamfam.com/lab/icons/silk/ |
+| `taskmon\build.bat` | Builds via MSBuild.exe, kills old instance first |
 | `taskmon\build-and-run.bat` | Full dev cycle: kill + build + launch |
 | `taskmon\kill.bat` | Kills taskmon by matching `*taskmon.ps1*` in WMI |
 | `%LOCALAPPDATA%\taskmon\taskmon.dll` | Compiled output (not in git) |

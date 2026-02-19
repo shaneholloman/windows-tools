@@ -2,6 +2,9 @@
 *.exe
 *.dll
 
+# MSBuild intermediate output (redirected to %LOCALAPPDATA%\taskmon\obj\ by taskmon.csproj)
+obj/
+
 # Diagnostic / scratch files
 *-test.ps1
 
