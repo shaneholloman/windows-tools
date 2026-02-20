@@ -110,6 +110,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\backup-phone\backu
 "@
 
 # ---------------------------------------------------------------------------
+# copypath — copies current or specified path to clipboard
+# ---------------------------------------------------------------------------
+Write-BatStub "copypath" @"
+@echo off
+powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\copypath\copypath.ps1" %*
+"@
+
+# ---------------------------------------------------------------------------
 # vid2md — YouTube URL to markdown clipboard
 # ---------------------------------------------------------------------------
 Write-BatStub "vid2md" @"
