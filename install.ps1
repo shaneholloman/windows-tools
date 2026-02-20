@@ -133,8 +133,14 @@ $sc.Save()
 Write-Host "  [lnk]  $shortcutPath" -ForegroundColor Green
 
 # ---------------------------------------------------------------------------
-# taskmon — taskbar system monitor shortcut (launched via VBS for no console window)
+# taskmon — bat stub (terminal launch) + taskbar shortcut
 # ---------------------------------------------------------------------------
+Write-BatStub "taskmon" @"
+@echo off
+wscript.exe "$RepoDir\taskmon\taskmon.vbs"
+"@
+
+# taskmon shortcut
 $tmVbsPath      = "$RepoDir\taskmon\taskmon.vbs"
 $tmShortcutPath = Join-Path $ToolsDir "Task Monitor.lnk"
 $tmSc           = $wsh.CreateShortcut($tmShortcutPath)
