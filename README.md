@@ -30,11 +30,11 @@ If you want to use any of this, the recommended approach is:
 | <img src="tools/vid2md/icons/page_white_link.png"> [vid2md](tools/vid2md/README.md) | CLI + context menu | Convert a YouTube URL to a markdown image-link and copy it to clipboard; right-click any `.url` Internet Shortcut in Explorer |
 | <img src="tools/removebg/icons/picture.png"> [removebg](tools/removebg/README.md) | CLI + context menu | Remove the background from an image using rembg / birefnet-portrait; right-click any image file in Explorer |
 | <img src="tools/ghopen/icons/world_go.png"> [ghopen](tools/ghopen/README.md) | CLI + context menu | Open the current repo on GitHub; opens the PR page if on a PR branch; right-click any folder in Explorer |
-| [ctxmenu](tools/ctxmenu/README.md) | GUI | Manage Explorer context menu entries - toggle shell verbs and COM handlers on/off without admin rights |
-| [backup-phone](tools/backup-phone/README.md) | CLI | Back up an iPhone over MTP (USB) to a flat folder on disk |
-| [scale-monitor4](tools/scale-monitor4/README.md) | Taskbar | Toggle Monitor 4 between 200% (normal) and 300% (filming) scaling |
-| [taskmon](tools/taskmon/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
-| [voice-type](tools/voice-type/README.md) | Taskbar | Push-to-talk local voice transcription - hold Right Ctrl, speak, release to paste |
+| <img src="tools/ctxmenu/icons/application_form.png"> [ctxmenu](tools/ctxmenu/README.md) | GUI | Manage Explorer context menu entries - toggle shell verbs and COM handlers on/off without admin rights |
+| <img src="tools/backup-phone/icons/phone.png"> [backup-phone](tools/backup-phone/README.md) | CLI | Back up an iPhone over MTP (USB) to a flat folder on disk |
+| <img src="tools/scale-monitor4/icons/monitor.png"> [scale-monitor4](tools/scale-monitor4/README.md) | Taskbar | Toggle Monitor 4 between 200% (normal) and 300% (filming) scaling |
+| <img src="tools/taskmon/icons/chart_bar.png"> [taskmon](tools/taskmon/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
+| <img src="tools/voice-type/icons/sound.png"> [voice-type](tools/voice-type/README.md) | Taskbar | Push-to-talk local voice transcription - hold Right Ctrl, speak, release to paste |
 
 ---
 

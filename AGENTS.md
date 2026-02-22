@@ -63,7 +63,10 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 5. Add a `Write-BatStub` call in `install.ps1`
 6. Run `install.ps1`
 7. Smoke-test: open a new terminal and call the command by name
-8. Commit
+8. Update `README.md` to add the tool to the list with its icon.
+9. Add a `tools/<name>/icons/<name>.png` icon (e.g. from famfamfam-silk).
+10. Update `website/src/index.js` to add the tool to the site.
+11. Commit
 
 ## Adding a taskbar / GUI tool
 
@@ -76,7 +79,10 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 6. Run `install.ps1`
 7. Test via `wscript.exe "C:\dev\me\mikerosoft.app\tools\<name>\<name>.vbs"`
 8. Right-click the generated `.lnk` in `C:\dev\tools` → Pin to taskbar
-9. Commit
+9. Update `README.md` to add the tool to the list with its icon.
+10. Add a `tools/<name>/icons/<name>.png` icon (e.g. from famfamfam-silk).
+11. Update `website/src/index.js` to add the tool to the site.
+12. Commit
 
 ---
 
