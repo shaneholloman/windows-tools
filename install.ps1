@@ -48,7 +48,7 @@ if (-not $onPath) {
 }
 
 Write-Host ""
-Write-Host "Installing mikes-windows-tools -> $ToolsDir" -ForegroundColor Cyan
+Write-Host "Installing mike-rosoft -> $ToolsDir" -ForegroundColor Cyan
 Write-Host ""
 
 # ---------------------------------------------------------------------------
@@ -214,7 +214,7 @@ function Add-MikesVerb($rootKey, $verbName, $label, $icon, $command) {
     Set-ItemProperty -Path $cmdKey  -Name "(Default)" -Value $command
 }
 
-$iconsOut = "$env:LOCALAPPDATA\mikes-windows-tools\icons"
+$iconsOut = "$env:LOCALAPPDATA\mike-rosoft\icons"
 New-Item -ItemType Directory -Force $iconsOut | Out-Null
 
 $wrenchIco  = "$iconsOut\mikes-tools.ico"

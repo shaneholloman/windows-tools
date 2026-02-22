@@ -1,6 +1,6 @@
-# mikes-windows-tools
+# mike-rosoft
 
-Personal Windows productivity scripts and CLI tools, tracked in git so changes
+A bunch of personalised tools for Windows users, tracked in git so changes
 are versioned and the setup can be reproduced on any machine.
 
 ---
@@ -41,8 +41,8 @@ If you want to use any of this, the recommended approach is:
 ## Quick start (fresh machine)
 
 ```powershell
-git clone <repo-url> C:\dev\me\mikes-windows-tools
-cd C:\dev\me\mikes-windows-tools
+git clone <repo-url> C:\dev\me\mike-rosoft
+cd C:\dev\me\mike-rosoft
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
@@ -54,7 +54,7 @@ add it automatically if not.
 ## How it works
 
 ```
-C:\dev\me\mikes-windows-tools\   <- this repo (source of truth)
+C:\dev\me\mike-rosoft\   <- this repo (source of truth)
     install.ps1
     transcribe\
         transcribe.bat            <- real logic lives here
@@ -86,7 +86,7 @@ Re-run `install.ps1` only when **adding a new tool**.
 # 1. Edit the source file in the repo (e.g. scale-monitor4\scale-monitor4.ps1)
 # 2. Test it
 # 3. Commit
-cd C:\dev\me\mikes-windows-tools
+cd C:\dev\me\mike-rosoft
 git add .
 git commit -m "scale-monitor4: describe the change"
 ```

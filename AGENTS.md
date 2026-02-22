@@ -1,4 +1,4 @@
-# Agent guidance — mikes-windows-tools
+# Agent guidance - mike-rosoft
 
 Instructions for AI agents (Cursor, etc.) working in this repo.
 
@@ -6,7 +6,7 @@ Instructions for AI agents (Cursor, etc.) working in this repo.
 
 ## Repo purpose
 
-Personal Windows productivity tools for Mike. Each tool lives in its own
+A bunch of personalised tools for Windows users. Each tool lives in its own
 subfolder. `install.ps1` wires everything into `C:\dev\tools` (which is on
 PATH) via thin stub `.bat` files or `.lnk` shortcuts.
 
@@ -74,7 +74,7 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 4. If the tool has external dependencies, write `<name>\deps.ps1`
 5. Add a shortcut block in `install.ps1` (see the `scale-monitor4` section)
 6. Run `install.ps1`
-7. Test via `wscript.exe "C:\dev\me\mikes-windows-tools\<name>\<name>.vbs"`
+7. Test via `wscript.exe "C:\dev\me\mike-rosoft\<name>\<name>.vbs"`
 8. Right-click the generated `.lnk` in `C:\dev\tools` → Pin to taskbar
 9. Commit
 
@@ -91,7 +91,7 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 ## File structure
 
 ```
-mikes-windows-tools\
+mike-rosoft\
 ├── AGENTS.md                  ← you are here
 ├── README.md
 ├── install.ps1                ← generates stubs + runs deps.ps1; re-run when adding tools
@@ -139,7 +139,7 @@ mikes-windows-tools\
 
 | Path | What it is |
 |---|---|
-| `C:\dev\me\mikes-windows-tools\` | This repo |
+| `C:\dev\me\mike-rosoft\` | This repo |
 | `C:\dev\tools\` | On PATH; holds stubs + large exe binaries |
 | `C:\dev\tools\ffmpeg.exe` | Used by transcribe |
 | `C:\dev\tools\faster-whisper-xxl.exe` | Used by transcribe |
