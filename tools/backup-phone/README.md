@@ -1,3 +1,5 @@
+![alt text](docs/ss1.png)
+
 # backup-phone
 
 Backs up all photos and videos from an iPhone (over USB/MTP) to a flat folder on disk.

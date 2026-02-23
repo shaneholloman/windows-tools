@@ -1,3 +1,5 @@
+![alt text](docs/ss1.png)
+
 # ![](icons/picture.png) removebg
 
 Removes the background from an image using [rembg](https://github.com/danielgatis/rembg) with the `birefnet-portrait` model.

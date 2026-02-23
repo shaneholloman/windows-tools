@@ -1,3 +1,5 @@
+![alt text](docs/ss1.png) ![alt text](docs/ss2.png)
+
 # scale-monitor4
 
 Toggles the DPI scaling of Monitor 4 (HG584T05) between 200% (normal use) and 300% (filming).
@@ -16,10 +18,10 @@ A small popup appears near the bottom-right of the screen showing the current sc
 
 Sets `DpiValue` in the per-monitor registry key for this display, then broadcasts `WM_SETTINGCHANGE` and calls `ChangeDisplaySettingsEx` with `CDS_RESET` to apply the new DPI live.
 
-| DpiValue | Scale |
-|---|---|
-| 4 | 200% — normal use |
-| 7 | 300% — filming |
+| DpiValue | Scale             |
+| -------- | ----------------- |
+| 4        | 200% — normal use |
+| 7        | 300% — filming    |
 
 ## Notes
 

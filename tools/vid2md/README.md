@@ -1,3 +1,5 @@
+![alt text](docs/ss1.png) ![alt text](docs/ss2.png)
+
 # vid2md
 
 Convert a YouTube URL into a ready-to-paste markdown image link and copy it to your clipboard in seconds.

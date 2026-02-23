@@ -1,3 +1,5 @@
+![alt text](docs/ss1.png)
+
 # ![](icons/world_go.png) ghopen
 
 Opens the current git repo on GitHub in the browser. If the current branch has a pull request, it opens the PR page instead of the repo root.
