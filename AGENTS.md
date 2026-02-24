@@ -196,14 +196,7 @@ After code changes to any `.cs` file, just re-run `build-and-run.bat`.
 
 ### Known limitations
 - In exclusive-fullscreen mode (rare - most modern games use borderless) the
-  overlay may briefly disappear and return within ~100 ms.
-- A 1-2 frame flicker when switching between maximized apps. This is caused
-  by the overlay being a separate compositor surface from the taskbar. See
-  [`task-stats/FLICKER-RESEARCH.md`](task-stats/FLICKER-RESEARCH.md) for detailed
-  investigation notes and the approaches tried (DWM attributes,
-  WM_WINDOWPOSCHANGING interception, SetParent embedding). The proper fix
-  requires rewriting rendering from `UpdateLayeredWindow` to `WM_PAINT` +
-  `WS_CHILD` embedding into `Shell_TrayWnd`.
+ overlay may briefly disappear and return within ~100 ms.
 
 ### Important paths for task-stats
 | Path | What it is |
