@@ -1,6 +1,6 @@
 ![alt text](docs/ss1.png) ![alt text](docs/ss2.png)
 
-# vid2md
+# video-to-markdown
 
 Convert a YouTube URL into a ready-to-paste markdown image link and copy it to your clipboard in seconds.
 
@@ -10,7 +10,7 @@ Uses the [video-to-markdown.com](https://video-to-markdown.com) public API. Vide
 
 ## What it produces
 
-Given a YouTube URL, vid2md calls the API and puts something like this on your clipboard:
+Given a YouTube URL, the tool calls the API and puts something like this on your clipboard:
 
 ```markdown
 [![Never Gonna Give You Up](https://thumbs.video-to-markdown.com/abc123.jpg)](https://youtu.be/dQw4w9WgXcQ)
@@ -24,30 +24,29 @@ Paste it into any Markdown file and you get a clickable thumbnail that links bac
 
 ### Right-click menu (any file or folder)
 
-Right-click **anything** in Explorer - any file type, any folder - open **Mike's Tools** and choose **Video to Markdown**. A small window appears in the centre of the screen:
+Right-click **anything** in Explorer - any file type, any folder - open **Mike's Tools** and choose **Video to Markdown**. A terminal window opens:
 
 1. Paste the YouTube URL (pre-filled automatically if your clipboard already has one)
-2. Press **Enter** or click **Convert**
-3. A progress bar animates while the API runs
-4. On success: "Copied to clipboard!" appears, a Windows toast notification pops, and the window closes automatically after 1.5 seconds
+2. Press **Enter**
+3. On success: "Copied to clipboard!" appears with the video title
 
-### Right-click a `.url` Internet Shortcut (silent mode)
+### Right-click a `.url` Internet Shortcut (silent-ish mode)
 
-If you have a YouTube link saved as a Windows Internet Shortcut (`.url` file), right-clicking and choosing **Video to Markdown** converts it with no UI at all - the toast notification is the only feedback.
+Right-click a Windows Internet Shortcut (`.url` file) and choose **Video to Markdown**. The tool reads the URL from the file and converts it - no typing required.
 
 ### Command line
 
 ```
-vid2md                          # open the UI (clipboard pre-filled if YouTube URL is there)
-vid2md https://youtu.be/...     # silent - no UI, just clipboard + toast
-vid2md "My Video.url"           # silent - reads URL from the shortcut file
+video-to-markdown                       # prompt for URL (clipboard pre-filled if YouTube URL is there)
+video-to-markdown https://youtu.be/...  # convert directly
+video-to-markdown "My Video.url"        # read URL from a Windows Internet Shortcut
 ```
 
 ---
 
 ## Workflow tip
 
-Copy the YouTube URL from your browser before opening the tool - the text box is pre-filled so you just hit Enter.
+Copy the YouTube URL from your browser before right-clicking - the prompt is pre-filled so you just hit Enter.
 
 ---
 
@@ -59,7 +58,11 @@ Copy the YouTube URL from your browser before opening the tool - the text box is
 
 ## Dependencies
 
-None. Uses built-in PowerShell (`Invoke-RestMethod`, `Set-Clipboard`) and Windows Runtime toast notifications (Windows 10+). Requires an internet connection.
+- [bun](https://bun.sh) runtime
+- [@inquirer/prompts](https://www.npmjs.com/package/@inquirer/prompts) for the interactive URL prompt
+- Internet connection
+
+No API keys required. Uses `clip.exe` (built into Windows) for clipboard access.
 
 ---
 

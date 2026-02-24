@@ -1,0 +1,12 @@
+{
+  "name": "video-to-markdown",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@inquirer/prompts": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "bun-types": "latest"
+  }
+}

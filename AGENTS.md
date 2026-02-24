@@ -23,7 +23,7 @@ PATH) via thin stub `.bat` files or `.lnk` shortcuts.
   For `.ps1` scripts, run them directly with PowerShell. For `.vbs` launchers,
   run via `wscript.exe`. Check exit codes.
 - **No console windows for GUI/taskbar tools.** Use the `.vbs` launcher pattern
-  (see `tools\scale-monitor4\scale-monitor4.vbs`) which calls `wscript.exe` with
+  (see `tools\scale-monitor\scale-monitor.vbs`) which calls `wscript.exe` with
   window style 0. Never launch PowerShell from a taskbar shortcut without a
   `.vbs` wrapper — it causes a CMD window to flash.
 - **ASCII encoding for `.bat` files.** Always write bat files with
@@ -72,10 +72,10 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 
 1. `mkdir <name>` in the repo root
 2. Write `<name>\<name>.ps1` with WinForms or notification logic
-3. Copy `tools\scale-monitor4\scale-monitor4.vbs` as `tools\<name>\<name>.vbs` and update
+3. Copy `tools\scale-monitor\scale-monitor.vbs` as `tools\<name>\<name>.vbs` and update
  the filename reference inside it
 4. If the tool has external dependencies, write `<name>\deps.ps1`
-5. Add a shortcut block in `install.ps1` (see the `scale-monitor4` section)
+5. Add a shortcut block in `install.ps1` (see the `scale-monitor` section)
 6. Run `install.ps1`
 7. Test via `wscript.exe "C:\dev\me\mikerosoft.app\tools\<name>\<name>.vbs"`
 8. Right-click the generated `.lnk` in `C:\dev\tools` → Pin to taskbar
@@ -88,7 +88,7 @@ them in alphabetical order. Pass `-SkipDeps` to skip this step.
 
 ## Editing an existing tool
 
-1. Edit the file in this repo directly (e.g. `tools\scale-monitor4\scale-monitor4.ps1`)
+1. Edit the file in this repo directly (e.g. `tools\scale-monitor\scale-monitor.ps1`)
 2. Test it: run via `wscript.exe` (GUI) or directly with PowerShell (CLI)
 3. Commit — no reinstall needed
 
@@ -113,12 +113,12 @@ mikerosoft.app\
     ├── removebg\
     │   ├── removebg.bat
     │   └── deps.ps1               ← pip install rembg[gpu]
-    ├── scale-monitor4\
-    │   ├── scale-monitor4.ps1     ← WinForms popup UI + registry toggle
-    │   ├── scale-monitor4.vbs     ← silent launcher (no window flash)
-    │   └── scale-monitor4.bat     ← thin bat wrapper (not used directly)
-    ├── taskmon\
-    │   ├── taskmon.csproj         ← MSBuild project (no SDK needed)
+    ├── scale-monitor\
+    │   ├── scale-monitor.ps1     ← WinForms popup UI + registry toggle
+    │   ├── scale-monitor.vbs     ← silent launcher (no window flash)
+    │   └── scale-monitor.bat     ← thin bat wrapper (not used directly)
+    ├── task-stats\
+    │   ├── task-stats.csproj      ← MSBuild project (no SDK needed)
     │   ├── Native.cs              ← Win32 P/Invoke + NVML declarations
     │   ├── Settings.cs            ← JSON-backed settings
     │   ├── Metrics.cs             ← CircularBuffer + PerformanceCounter/NVML sampling
@@ -126,11 +126,11 @@ mikerosoft.app\
     │   ├── SettingsForm.cs        ← tabbed settings dialog
     │   ├── App.cs                 ← DarkRenderer + App entry point
     │   ├── icons\                 ← famfamfam silk icons (CC BY 2.5) embedded as manifest resources
-    │   ├── taskmon.ps1            ← PS launcher: loads pre-built DLL, calls App::Run()
-    │   ├── taskmon.vbs            ← silent launcher (no console window)
-    │   ├── build.bat              ← builds via MSBuild.exe → %LOCALAPPDATA%\taskmon\taskmon.dll
+    │   ├── task-stats.ps1         ← PS launcher: loads pre-built DLL, calls App::Run()
+    │   ├── task-stats.vbs         ← silent launcher (no console window)
+    │   ├── build.bat              ← builds via MSBuild.exe → %LOCALAPPDATA%\task-stats\task-stats.dll
     │   ├── build-and-run.bat      ← kill + build + launch in one step (daily dev command)
-    │   ├── kill.bat               ← kills running taskmon by command-line pattern
+    │   ├── kill.bat               ← kills running task-stats by command-line pattern
     │   └── deps.ps1               ← checks nvml.dll present (NVIDIA GPU monitoring)
     └── transcribe\
         ├── transcribe.bat         ← uses %EXEDIR% for ffmpeg / whisper paths
@@ -151,7 +151,7 @@ mikerosoft.app\
 
 ---
 
-## taskmon specifics
+## task-stats specifics
 
 Replacement for TrafficMonitor / XMeters. Displays NET↑/↓, CPU, GPU, MEM as
 sparkline graphs on the right side of the Windows taskbar, positioned just to
@@ -160,20 +160,20 @@ the LEFT of the system clock (detected via `TrayNotifyWnd`).
 ### Icons
 Right-click menu icons come from the **famfamfam silk icon set** (Mark James, CC BY 2.5).
 Source: https://www.famfamfam.com/lab/icons/silk/
-The PNGs live in `taskmon\icons\` and are embedded into the DLL as manifest resources via
-`<EmbeddedResource Include="icons\*.png" />` in `taskmon.csproj`.
+The PNGs live in `task-stats\icons\` and are embedded into the DLL as manifest resources via
+`<EmbeddedResource Include="icons\*.png" />` in `task-stats.csproj`.
 
 ### Architecture
 - **No .NET SDK required.** Built by `MSBuild.exe` from .NET Framework 4
   (`C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe`).
-- Project file: `taskmon\taskmon.csproj` (targets .NET Framework 4, embeds `icons\*.png` as manifest resources).
-- Compiled DLL is cached at `%LOCALAPPDATA%\taskmon\taskmon.dll`.
-- `taskmon.ps1` is a thin launcher — it loads the DLL and calls `[TaskMon.App]::Run()`.
+- Project file: `task-stats\task-stats.csproj` (targets .NET Framework 4, embeds `icons\*.png` as manifest resources).
+- Compiled DLL is cached at `%LOCALAPPDATA%\task-stats\task-stats.dll`.
+- `task-stats.ps1` is a thin launcher - it loads the DLL and calls `[TaskMon.App]::Run()`.
   No compilation at runtime, so startup is instant and no OOM risk in Cursor.
 
 ### Dev workflow
 ```
-cd taskmon
+cd task-stats
 .\build-and-run.bat    # kill old instance + compile + launch
 ```
 After code changes to any `.cs` file, just re-run `build-and-run.bat`.
@@ -184,43 +184,43 @@ After code changes to any `.cs` file, just re-run `build-and-run.bat`.
   taskbar shows through. Only sparklines and text are visible.
 - Position: `TrayLeftEdge()` finds `Shell_TrayWnd → TrayNotifyWnd` via
   `FindWindowEx` + `GetWindowRect` to know where the clock starts.
-- `StartPosition = Manual` is critical — without it, `Show()` overrides the
+- `StartPosition = Manual` is critical - without it, `Show()` overrides the
   position set in the constructor.
 - Z-order: a 100 ms timer re-asserts `HWND_TOPMOST` + a `WM_WINDOWPOSCHANGED`
   handler does it immediately on any z-order change.
-- GPU: NVML P/Invoke (`nvml.dll`) — no `nvidia-smi` subprocess.
-- CPU: `PerformanceCounter("Processor", "% Processor Time")` — aggregate +
+- GPU: NVML P/Invoke (`nvml.dll`) - no `nvidia-smi` subprocess.
+- CPU: `PerformanceCounter("Processor", "% Processor Time")` - aggregate +
   per-core for the XMeters-style grid mode.
-- Settings: `%LOCALAPPDATA%\taskmon\settings.json` (richly commented JSON).
+- Settings: `%LOCALAPPDATA%\task-stats\settings.json` (richly commented JSON).
   Right-click overlay → Settings to change via UI.
 
 ### Known limitations
-- In exclusive-fullscreen mode (rare — most modern games use borderless) the
+- In exclusive-fullscreen mode (rare - most modern games use borderless) the
   overlay may briefly disappear and return within ~100 ms.
-- A 1–2 frame flicker when switching between maximized apps. This is caused
+- A 1-2 frame flicker when switching between maximized apps. This is caused
   by the overlay being a separate compositor surface from the taskbar. See
-  [`taskmon/FLICKER-RESEARCH.md`](taskmon/FLICKER-RESEARCH.md) for detailed
+  [`task-stats/FLICKER-RESEARCH.md`](task-stats/FLICKER-RESEARCH.md) for detailed
   investigation notes and the approaches tried (DWM attributes,
   WM_WINDOWPOSCHANGING interception, SetParent embedding). The proper fix
   requires rewriting rendering from `UpdateLayeredWindow` to `WM_PAINT` +
   `WS_CHILD` embedding into `Shell_TrayWnd`.
 
-### Important paths for taskmon
+### Important paths for task-stats
 | Path | What it is |
 |---|---|
-| `tools\taskmon\taskmon.csproj` | MSBuild project file |
-| `tools\taskmon\Native.cs` | Win32 P/Invoke + NVML declarations |
-| `tools\taskmon\Settings.cs` | JSON-backed settings |
-| `tools\taskmon\Metrics.cs` | CircularBuffer + PerformanceCounter/NVML sampling |
-| `tools\taskmon\OverlayForm.cs` | Layered window rendering + hit-test + menu |
-| `tools\taskmon\SettingsForm.cs` | Tabbed settings dialog |
-| `tools\taskmon\App.cs` | DarkRenderer + App entry point |
-| `tools\taskmon\icons\` | famfamfam silk icons — CC BY 2.5, https://www.famfamfam.com/lab/icons/silk/ |
-| `tools\taskmon\build.bat` | Builds via MSBuild.exe, kills old instance first |
-| `tools\taskmon\build-and-run.bat` | Full dev cycle: kill + build + launch |
-| `tools\taskmon\kill.bat` | Kills taskmon by matching `*taskmon.ps1*` in WMI |
-| `%LOCALAPPDATA%\taskmon\taskmon.dll` | Compiled output (not in git) |
-| `%LOCALAPPDATA%\taskmon\settings.json` | User settings (not in git) |
+| `tools\task-stats\task-stats.csproj` | MSBuild project file |
+| `tools\task-stats\Native.cs` | Win32 P/Invoke + NVML declarations |
+| `tools\task-stats\Settings.cs` | JSON-backed settings |
+| `tools\task-stats\Metrics.cs` | CircularBuffer + PerformanceCounter/NVML sampling |
+| `tools\task-stats\OverlayForm.cs` | Layered window rendering + hit-test + menu |
+| `tools\task-stats\SettingsForm.cs` | Tabbed settings dialog |
+| `tools\task-stats\App.cs` | DarkRenderer + App entry point |
+| `tools\task-stats\icons\` | famfamfam silk icons - CC BY 2.5, https://www.famfamfam.com/lab/icons/silk/ |
+| `tools\task-stats\build.bat` | Builds via MSBuild.exe, kills old instance first |
+| `tools\task-stats\build-and-run.bat` | Full dev cycle: kill + build + launch |
+| `tools\task-stats\kill.bat` | Kills task-stats by matching `*task-stats.ps1*` in WMI |
+| `%LOCALAPPDATA%\task-stats\task-stats.dll` | Compiled output (not in git) |
+| `%LOCALAPPDATA%\task-stats\settings.json` | User settings (not in git) |
 | `C:\Windows\System32\nvml.dll` | NVIDIA GPU monitoring (ships with drivers) |
 
 ---
@@ -259,7 +259,7 @@ cmd /c "tasklist /FO CSV" | ConvertFrom-Csv | Where-Object { $_."Image Name" -li
 
 ---
 
-## scale-monitor4 specifics
+## scale-monitor specifics
 
 - Monitor: HG584T05, "Display 4", AMD Radeon Graphics
 - Registry key: `HKCU:\Control Panel\Desktop\PerMonitorSettings\RTK8405_0C_07E9_97^C9A428C8B2686559443005CCA2CE3E2E`
@@ -274,10 +274,10 @@ cmd /c "tasklist /FO CSV" | ConvertFrom-Csv | Where-Object { $_."Image Name" -li
 
 ```powershell
 # Run a ps1 directly for testing
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\scale-monitor4\scale-monitor4.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\scale-monitor\scale-monitor.ps1
 
 # Run a tool via its vbs launcher (same as taskbar click)
-wscript.exe ".\tools\scale-monitor4\scale-monitor4.vbs"
+wscript.exe ".\tools\scale-monitor\scale-monitor.vbs"
 
 # Re-run install after adding a tool
 powershell -ExecutionPolicy Bypass -File .\install.ps1

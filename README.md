@@ -27,16 +27,19 @@ If you want to use any of this, the recommended approach is:
 | Name | Type | Description |
 |---|---|---|
 | <img src="tools/transcribe/icons/film.png"> [transcribe](tools/transcribe/README.md) | CLI + context menu | Extract audio from a video and transcribe it via faster-whisper (CUDA with CPU fallback); right-click any video file in Explorer |
-| <img src="tools/vid2md/icons/page_white_link.png"> [vid2md](tools/vid2md/README.md) | CLI + context menu | Convert a YouTube URL to a markdown image-link and copy it to clipboard; right-click any `.url` Internet Shortcut in Explorer |
+| <img src="tools/video-to-markdown/icons/page_white_link.png"> [video-to-markdown](tools/video-to-markdown/README.md) | CLI + context menu | Convert a YouTube URL to a markdown image-link and copy it to clipboard; right-click any `.url` Internet Shortcut in Explorer |
 | <img src="tools/removebg/icons/picture.png"> [removebg](tools/removebg/README.md) | CLI + context menu | Remove the background from an image using rembg / birefnet-portrait; right-click any image file in Explorer |
 | <img src="tools/ghopen/icons/world_go.png"> [ghopen](tools/ghopen/README.md) | CLI + context menu | Open the current repo on GitHub; opens the PR page if on a PR branch; right-click any folder in Explorer |
 | <img src="tools/ctxmenu/icons/application_form.png"> [ctxmenu](tools/ctxmenu/README.md) | GUI | Manage Explorer context menu entries - toggle shell verbs and COM handlers on/off without admin rights |
 | <img src="tools/backup-phone/icons/phone.png"> [backup-phone](tools/backup-phone/README.md) | CLI | Back up an iPhone over MTP (USB) to a flat folder on disk |
-| <img src="tools/scale-monitor4/icons/monitor.png"> [scale-monitor4](tools/scale-monitor4/README.md) | Taskbar | Toggle Monitor 4 between 200% (normal) and 300% (filming) scaling |
-| <img src="tools/taskmon/icons/chart_bar.png"> [taskmon](tools/taskmon/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
+| <img src="tools/scale-monitor/icons/monitor.png"> [scale-monitor](tools/scale-monitor/README.md) | Taskbar | Toggle Monitor 4 between 200% (normal) and 300% (filming) scaling |
+| <img src="tools/task-stats/icons/chart_bar.png"> [task-stats](tools/task-stats/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
 | <img src="tools/voice-type/icons/sound.png"> [voice-type](tools/voice-type/README.md) | Taskbar | Push-to-talk local voice transcription - hold Right Ctrl, speak, release to paste |
 | <img src="tools/video-titles/icons/video-titles.png"> [video-titles](tools/video-titles/) | Context menu | Chat with an AI agent to ideate YouTube titles using the Compelling Title Matrix; right-click any video in Explorer (requires `OPENROUTER_API_KEY` in `.env`) |
+| <img src="tools/video-description/icons/video-description.png"> [video-description](tools/video-description/README.md) | CLI + context menu | Generate a YouTube description via Gemini; auto-loads or generates a transcript, then drops into an interactive chat for revisions; right-click any video in Explorer (requires `OPENROUTER_API_KEY` in `.env`) |
+| <img src="tools/generate-from-image/icons/wand.png"> [generate-from-image](tools/generate-from-image/README.md) | Context menu | AI image generation from a reference image; right-click any image in Explorer, describe what you want, and Gemini generates a new image (requires `OPENROUTER_API_KEY` in `.env`) |
 | <img src="tools/svg-to-png/icons/svg-to-png.png"> [svg-to-png](tools/svg-to-png/) | Context menu | Render an SVG to PNG at high resolution; right-click any `.svg` file in Explorer; output is always at least 2048px on its smallest dimension |
+| <img src="tools/copypath/icons/page_copy.png"> [copypath](tools/copypath/README.md) | CLI | Copy the absolute path of a file or folder to the clipboard; defaults to the current directory if no argument given |
 
 ---
 
@@ -63,17 +66,17 @@ C:\dev\me\mikerosoft.app\   <- this repo (source of truth)
     tools\
         transcribe\
             transcribe.bat            <- real logic lives here
-        scale-monitor4\
-            scale-monitor4.ps1
-            scale-monitor4.vbs
-            scale-monitor4.bat
+        scale-monitor\
+            scale-monitor.ps1
+            scale-monitor.vbs
+            scale-monitor.bat
         ...
 
 C:\dev\tools\                    <- on PATH; kept clean
     transcribe.bat               <- thin stub: sets EXEDIR, calls repo bat
     removebg.bat                 <- thin stub
     backup-phone.bat             <- thin stub
-    Scale Monitor 4.lnk         <- taskbar shortcut -> repo .vbs
+    Scale Monitor.lnk           <- taskbar shortcut -> repo .vbs
     ffmpeg.exe                   <- large binaries stay here, not in repo
     faster-whisper-xxl.exe
     ...
@@ -88,12 +91,12 @@ Re-run `install.ps1` only when **adding a new tool**.
 ## Updating a tool
 
 ```powershell
-# 1. Edit the source file in the repo (e.g. tools\scale-monitor4\scale-monitor4.ps1)
+# 1. Edit the source file in the repo (e.g. tools\scale-monitor\scale-monitor.ps1)
 # 2. Test it
 # 3. Commit
 cd C:\dev\me\mikerosoft.app
 git add .
-git commit -m "scale-monitor4: describe the change"
+git commit -m "scale-monitor: describe the change"
 ```
 
 No reinstall needed. The stub in `C:\dev\tools` already points at the repo file.
@@ -131,11 +134,11 @@ call "$RepoDir\tools\my-tool\my-tool.bat" %*
 
 Then in `my-tool.bat` use `%EXEDIR%` instead of `%~dp0` to find co-located binaries.
 
-### Taskbar / GUI tool (like scale-monitor4)
+### Taskbar / GUI tool (like scale-monitor)
 
 1. Create a subfolder with the `.ps1` and a `.vbs` launcher:
 
-   **`my-tool.vbs`** (boilerplate - copy from `tools\scale-monitor4\scale-monitor4.vbs`):
+   **`my-tool.vbs`** (boilerplate - copy from `tools\scale-monitor\scale-monitor.vbs`):
    ```vbs
    Set objShell = CreateObject("WScript.Shell")
    objShell.Run "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File """ & _

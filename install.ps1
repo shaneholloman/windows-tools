@@ -6,7 +6,7 @@
 # What it does:
 #   - Writes thin stub .bat files into $ToolsDir (which should be on your PATH)
 #   - Stubs simply forward to the real scripts inside this repo
-#   - Recreates the "Scale Monitor 4" taskbar shortcut
+#   - Recreates the "Scale Monitor" taskbar shortcut
 #   - Runs each tool's deps.ps1 (if present) to install/check dependencies
 #
 # Usage:
@@ -136,11 +136,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\tools\copypath\cop
 "@
 
 # ---------------------------------------------------------------------------
-# vid2md — YouTube URL to markdown clipboard
+# video-to-markdown — YouTube URL to markdown clipboard
 # ---------------------------------------------------------------------------
-Write-BatStub "vid2md" @"
+Write-BatStub "video-to-markdown" @"
 @echo off
-powershell -NoProfile -ExecutionPolicy Bypass -Sta -File "$RepoDir\tools\vid2md\vid2md.ps1" %*
+bun run "$RepoDir\tools\video-to-markdown\index.ts" %*
 "@
 
 # ---------------------------------------------------------------------------
@@ -176,39 +176,60 @@ bun run "$RepoDir\tools\svg-to-png\svg-to-png.ts" %*
 "@
 
 # ---------------------------------------------------------------------------
-# scale-monitor4 — taskbar shortcut (no bat stub needed; launched via shortcut)
+# scale-monitor — taskbar shortcut (no bat stub needed; launched via shortcut)
 # ---------------------------------------------------------------------------
-$vbsPath      = "$RepoDir\tools\scale-monitor4\scale-monitor4.vbs"
-$shortcutPath = Join-Path $ToolsDir "Scale Monitor 4.lnk"
+$vbsPath      = "$RepoDir\tools\scale-monitor\scale-monitor.vbs"
+$shortcutPath = Join-Path $ToolsDir "Scale Monitor.lnk"
 $wsh          = New-Object -ComObject WScript.Shell
 $sc           = $wsh.CreateShortcut($shortcutPath)
 $sc.TargetPath       = "wscript.exe"
 $sc.Arguments        = "`"$vbsPath`""
-$sc.WorkingDirectory = "$RepoDir\tools\scale-monitor4"
+$sc.WorkingDirectory = "$RepoDir\tools\scale-monitor"
 $sc.Description      = "Toggle Monitor 4 scale between 200% (normal) and 300% (filming)"
 $sc.IconLocation     = "%SystemRoot%\System32\imageres.dll,109"
 $sc.Save()
 Write-Host "  [lnk]  $shortcutPath" -ForegroundColor Green
 
+# Also place in Start Menu so Windows Search finds it (Win key + type)
+$startMenuPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Scale Monitor.lnk"
+$scSm = $wsh.CreateShortcut($startMenuPath)
+$scSm.TargetPath       = "wscript.exe"
+$scSm.Arguments        = "`"$vbsPath`""
+$scSm.WorkingDirectory = "$RepoDir\tools\scale-monitor"
+$scSm.Description      = "Toggle Monitor 4 scale between 200% (normal) and 300% (filming)"
+$scSm.IconLocation     = "%SystemRoot%\System32\imageres.dll,109"
+$scSm.Save()
+Write-Host "  [lnk]  $startMenuPath" -ForegroundColor Green
+
 # ---------------------------------------------------------------------------
-# taskmon — bat stub (terminal launch) + taskbar shortcut
+# task-stats — bat stub (terminal launch) + taskbar shortcut
 # ---------------------------------------------------------------------------
-Write-BatStub "taskmon" @"
+Write-BatStub "task-stats" @"
 @echo off
-wscript.exe "$RepoDir\tools\taskmon\taskmon.vbs"
+wscript.exe "$RepoDir\tools\task-stats\task-stats.vbs"
 "@
 
-# taskmon shortcut
-$tmVbsPath      = "$RepoDir\tools\taskmon\taskmon.vbs"
-$tmShortcutPath = Join-Path $ToolsDir "Task Monitor.lnk"
+# task-stats shortcut (C:\dev\tools + Start Menu so Windows Search finds it)
+$tmVbsPath      = "$RepoDir\tools\task-stats\task-stats.vbs"
+$tmShortcutPath = Join-Path $ToolsDir "Task Stats.lnk"
 $tmSc           = $wsh.CreateShortcut($tmShortcutPath)
 $tmSc.TargetPath       = "wscript.exe"
 $tmSc.Arguments        = "`"$tmVbsPath`""
-$tmSc.WorkingDirectory = "$RepoDir\tools\taskmon"
-$tmSc.Description      = "Taskbar system monitor: NET / CPU / GPU / MEM sparklines"
+$tmSc.WorkingDirectory = "$RepoDir\tools\task-stats"
+$tmSc.Description      = "Taskbar system stats: NET / CPU / GPU / MEM sparklines"
 $tmSc.IconLocation     = "%SystemRoot%\System32\imageres.dll,174"
 $tmSc.Save()
 Write-Host "  [lnk]  $tmShortcutPath" -ForegroundColor Green
+
+$tmStartMenuPath = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Task Stats.lnk"
+$tmSmSc = $wsh.CreateShortcut($tmStartMenuPath)
+$tmSmSc.TargetPath       = "wscript.exe"
+$tmSmSc.Arguments        = "`"$tmVbsPath`""
+$tmSmSc.WorkingDirectory = "$RepoDir\tools\task-stats"
+$tmSmSc.Description      = "Taskbar system stats: NET / CPU / GPU / MEM sparklines"
+$tmSmSc.IconLocation     = "%SystemRoot%\System32\imageres.dll,174"
+$tmSmSc.Save()
+Write-Host "  [lnk]  $tmStartMenuPath" -ForegroundColor Green
 
 # ---------------------------------------------------------------------------
 # voice-type — taskbar shortcut (launched via VBS for no console window)
@@ -280,7 +301,7 @@ ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"                      
 ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"                          $filmIco
 ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"                         $pictureIco
 ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"                          $worldIco
-ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"                   $linkPageIco
+ConvertTo-Ico "$RepoDir\tools\video-to-markdown\icons\page_white_link.png"         $linkPageIco
 ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"                $titlesIco
 ConvertTo-Ico "$RepoDir\tools\generate-from-image\icons\wand.png"                $wandIco
 ConvertTo-Ico "$RepoDir\tools\svg-to-png\icons\svg-to-png.png"                   $svgIco
@@ -295,7 +316,7 @@ foreach ($ext in $videoExts) {
     Add-MikesVerb $root "Transcribe"        "Transcribe Video"    $filmIco        'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
     Add-MikesVerb $root "VideoTitles"      "Video Titles"        $titlesIco      'cmd.exe /k ""C:\dev\tools\video-titles.bat" "%1""'
     Add-MikesVerb $root "VideoDescription" "Video Description"   $descriptionIco 'cmd.exe /k ""C:\dev\tools\video-description.bat" "%1""'
-    Add-MikesVerb $root "Vid2md"           "Video to Markdown"   $linkPageIco    "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
+    Add-MikesVerb $root "Vid2md"           "Video to Markdown"   $linkPageIco    'cmd.exe /k ""C:\dev\tools\video-to-markdown.bat" "%1""'
 }
 
 # --- removebg: image file extensions ---
@@ -315,10 +336,10 @@ Add-MikesVerb $svgRoot "SvgToPng" "Render to PNG (2048px min)" $svgIco 'cmd.exe 
 # --- vid2md: Internet Shortcut files (.url) - YouTube links ---
 $urlRoot = "HKCU:\Software\Classes\SystemFileAssociations\.url\shell\MikesTools"
 Set-MikesToolsRoot $urlRoot $wrenchIco
-Add-MikesVerb $urlRoot "Vid2md" "Video to Markdown" $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
+Add-MikesVerb $urlRoot "Vid2md" "Video to Markdown" $linkPageIco 'cmd.exe /k ""C:\dev\tools\video-to-markdown.bat" "%1""'
 
 # --- ghopen + vid2md: folders (right-click on folder icon) and folder background ---
-$vid2mdCmd = "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
+$vid2mdCmd = 'cmd.exe /k ""C:\dev\tools\video-to-markdown.bat" "%1""'
 
 # Directory - right-clicking a folder item; %1 = folder path
 $dirRoot = "HKCU:\Software\Classes\Directory\shell\MikesTools"
@@ -332,7 +353,7 @@ $bgRoot = "HKCU:\Software\Classes\Directory\Background\shell\MikesTools"
 Set-MikesToolsRoot $bgRoot $wrenchIco
 Add-MikesVerb $bgRoot "GhOpen"           "Open on GitHub"     $worldIco       'cmd.exe /k "cd /d "%V" && "C:\dev\tools\ghopen.bat""'
 Add-MikesVerb $bgRoot "VideoDescription" "Video Description"  $descriptionIco 'cmd.exe /k ""C:\dev\tools\video-description.bat" "%V""'
-Add-MikesVerb $bgRoot "Vid2md"           "Video to Markdown"  $linkPageIco    "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`""
+Add-MikesVerb $bgRoot "Vid2md"           "Video to Markdown"  $linkPageIco    'cmd.exe /k "C:\dev\tools\video-to-markdown.bat"'
 
 # --- vid2md: all files and folders via AllFilesystemObjects ---
 # AllFilesystemObjects is a Windows shell class that matches every file and folder.
@@ -383,6 +404,6 @@ Write-Host "Done. To update tools in future: git pull (no reinstall needed)." -F
 Write-Host "To add a new tool: create its subfolder, then re-run install.ps1." -ForegroundColor Yellow
 Write-Host "To skip dependency checks: install.ps1 -SkipDeps" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Reminder: right-click 'Scale Monitor 4.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
-Write-Host "Reminder: right-click 'Task Monitor.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
+Write-Host "Reminder: right-click 'Scale Monitor.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
+Write-Host "Reminder: right-click 'Task Stats.lnk' in $ToolsDir and pin to taskbar." -ForegroundColor Cyan
 Write-Host "Reminder: right-click 'Voice Type.lnk' in $ToolsDir and pin to taskbar (or run on login)." -ForegroundColor Cyan
