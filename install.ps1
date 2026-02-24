@@ -26,6 +26,32 @@ if (-not (Test-Path $ToolsDir)) {
 }
 
 # ---------------------------------------------------------------------------
+# .env — load repo-root .env file into the current process environment
+# ---------------------------------------------------------------------------
+$dotEnvPath = Join-Path $RepoDir ".env"
+if (Test-Path $dotEnvPath) {
+    Get-Content $dotEnvPath | ForEach-Object {
+        if ($_ -match '^\s*([^#][^=]*?)\s*=\s*(.*)\s*$') {
+            $val = $Matches[2].Trim().Trim('"').Trim("'")
+            [System.Environment]::SetEnvironmentVariable($Matches[1].Trim(), $val, 'Process')
+        }
+    }
+    Write-Host "  [env]  Loaded $dotEnvPath" -ForegroundColor Green
+} else {
+    Write-Host "  [env]  No .env found - copy .env.example to .env and fill in your keys." -ForegroundColor Yellow
+}
+
+# Hard-fail if OPENROUTER_API_KEY is missing (required by video-titles and future AI tools).
+if (-not $env:OPENROUTER_API_KEY) {
+    Write-Host ""
+    Write-Host "ERROR: OPENROUTER_API_KEY is not set." -ForegroundColor Red
+    Write-Host "  1. Copy .env.example to .env at the repo root" -ForegroundColor Yellow
+    Write-Host "  2. Set OPENROUTER_API_KEY=sk-or-..." -ForegroundColor Yellow
+    Write-Host "  Get a key at: https://openrouter.ai/keys" -ForegroundColor Yellow
+    exit 1
+}
+
+# ---------------------------------------------------------------------------
 # PATH check — warn and offer to fix if $ToolsDir is not on PATH
 # ---------------------------------------------------------------------------
 $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine"); if (-not $machinePath) { $machinePath = "" }
@@ -209,16 +235,18 @@ function Add-MikesVerb($rootKey, $verbName, $label, $icon, $command) {
 $iconsOut = "$env:LOCALAPPDATA\mikerosoft.app\icons"
 New-Item -ItemType Directory -Force $iconsOut | Out-Null
 
-$wrenchIco  = "$iconsOut\mikes-tools.ico"
-$filmIco    = "$iconsOut\transcribe.ico"
-$pictureIco = "$iconsOut\removebg.ico"
-$worldIco   = "$iconsOut\ghopen.ico"
+$wrenchIco   = "$iconsOut\mikes-tools.ico"
+$filmIco     = "$iconsOut\transcribe.ico"
+$pictureIco  = "$iconsOut\removebg.ico"
+$worldIco    = "$iconsOut\ghopen.ico"
 $linkPageIco = "$iconsOut\vid2md.ico"
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"       $wrenchIco
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"         $filmIco
-ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"        $pictureIco
-ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"         $worldIco
-ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"  $linkPageIco
+$titlesIco   = "$iconsOut\video-titles.ico"
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"             $wrenchIco
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"               $filmIco
+ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"              $pictureIco
+ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"               $worldIco
+ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"        $linkPageIco
+ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"     $titlesIco
 Write-Host "  [ico]  Icons written to $iconsOut" -ForegroundColor Green
 
 # --- transcribe + vid2md: video file extensions ---
@@ -226,8 +254,9 @@ $videoExts = @('.mp4', '.mkv', '.avi', '.mov', '.wmv', '.webm', '.m4v', '.mpg', 
 foreach ($ext in $videoExts) {
     $root = "HKCU:\Software\Classes\SystemFileAssociations\$ext\shell\MikesTools"
     Set-MikesToolsRoot $root $wrenchIco
-    Add-MikesVerb $root "Transcribe" "Transcribe Video"   $filmIco    'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
-    Add-MikesVerb $root "Vid2md"    "Video to Markdown"  $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
+    Add-MikesVerb $root "Transcribe"   "Transcribe Video"   $filmIco     'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
+    Add-MikesVerb $root "VideoTitles" "Video Titles"      $titlesIco   "wscript.exe `"$RepoDir\tools\video-titles\video-titles.vbs`" `"%1`""
+    Add-MikesVerb $root "Vid2md"      "Video to Markdown" $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
 }
 
 # --- removebg: image file extensions ---

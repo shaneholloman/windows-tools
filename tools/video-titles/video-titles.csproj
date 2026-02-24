@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  video-titles.csproj - MSBuild project (no .NET SDK required)
+  Compiler:  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
+  Output:    %LOCALAPPDATA%\video-titles\video-titles.dll
+  Build:     run build.bat  (or build-and-run.bat for dev cycle)
+-->
+<Project ToolsVersion="4.0" DefaultTargets="Build"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <AssemblyName>video-titles</AssemblyName>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>VideoTitles</RootNamespace>
+    <Optimize>true</Optimize>
+    <OutputPath>$(LOCALAPPDATA)\video-titles\</OutputPath>
+    <BaseIntermediateOutputPath>$(LOCALAPPDATA)\video-titles\obj\</BaseIntermediateOutputPath>
+    <!-- Target x64 to match 64-bit PowerShell (avoids MSB3270 mismatch) -->
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- MSB3644 (.NET 4.6 targeting pack not installed) is expected and harmless:
+         MSBuild falls back to GAC DLLs, which are the same files we run against. -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Net.Http" />
+    <!-- JavaScriptSerializer for JSON - no NuGet needed -->
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>
