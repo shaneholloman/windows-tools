@@ -35,6 +35,7 @@ If you want to use any of this, the recommended approach is:
 | <img src="tools/scale-monitor4/icons/monitor.png"> [scale-monitor4](tools/scale-monitor4/README.md) | Taskbar | Toggle Monitor 4 between 200% (normal) and 300% (filming) scaling |
 | <img src="tools/taskmon/icons/chart_bar.png"> [taskmon](tools/taskmon/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
 | <img src="tools/voice-type/icons/sound.png"> [voice-type](tools/voice-type/README.md) | Taskbar | Push-to-talk local voice transcription - hold Right Ctrl, speak, release to paste |
+| <img src="tools/video-titles/icons/video-titles.png"> [video-titles](tools/video-titles/) | Context menu | Chat with an AI agent to ideate YouTube titles using the Compelling Title Matrix; right-click any video in Explorer (requires `OPENROUTER_API_KEY` in `.env`) |
 
 ---
 
@@ -43,11 +44,13 @@ If you want to use any of this, the recommended approach is:
 ```powershell
 git clone <repo-url> C:\dev\me\mikerosoft.app
 cd C:\dev\me\mikerosoft.app
+copy .env.example .env        # then edit .env and fill in your API keys
 powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
-`install.ps1` checks whether `C:\dev\tools` is on your `PATH` and offers to
-add it automatically if not.
+`install.ps1` loads `.env`, checks whether `C:\dev\tools` is on your `PATH`
+and offers to add it automatically if not. It will error out if any required
+API keys are missing.
 
 ---
 
