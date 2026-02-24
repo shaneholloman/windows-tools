@@ -160,6 +160,14 @@ bun run "$RepoDir\tools\generate-from-image\index.ts" %*
 "@
 
 # ---------------------------------------------------------------------------
+# video-description — generate YouTube description from transcript via chat
+# ---------------------------------------------------------------------------
+Write-BatStub "video-description" @"
+@echo off
+bun run "$RepoDir\tools\video-description\index.ts" %*
+"@
+
+# ---------------------------------------------------------------------------
 # svg-to-png — render SVG to PNG, smallest dimension >= 2048px
 # ---------------------------------------------------------------------------
 Write-BatStub "svg-to-png" @"
@@ -259,22 +267,24 @@ function Add-MikesVerb($rootKey, $verbName, $label, $icon, $command) {
 $iconsOut = "$env:LOCALAPPDATA\mikerosoft.app\icons"
 New-Item -ItemType Directory -Force $iconsOut | Out-Null
 
-$wrenchIco   = "$iconsOut\mikes-tools.ico"
-$filmIco     = "$iconsOut\transcribe.ico"
-$pictureIco  = "$iconsOut\removebg.ico"
-$worldIco    = "$iconsOut\ghopen.ico"
-$linkPageIco = "$iconsOut\vid2md.ico"
-$titlesIco   = "$iconsOut\video-titles.ico"
-$wandIco     = "$iconsOut\wand.ico"
-$svgIco      = "$iconsOut\svg-to-png.ico"
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"                     $wrenchIco
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"                       $filmIco
-ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"                      $pictureIco
-ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"                       $worldIco
-ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"                $linkPageIco
-ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"             $titlesIco
-ConvertTo-Ico "$RepoDir\tools\generate-from-image\icons\wand.png"             $wandIco
-ConvertTo-Ico "$RepoDir\tools\svg-to-png\icons\svg-to-png.png"                $svgIco
+$wrenchIco      = "$iconsOut\mikes-tools.ico"
+$filmIco        = "$iconsOut\transcribe.ico"
+$pictureIco     = "$iconsOut\removebg.ico"
+$worldIco       = "$iconsOut\ghopen.ico"
+$linkPageIco    = "$iconsOut\vid2md.ico"
+$titlesIco      = "$iconsOut\video-titles.ico"
+$wandIco        = "$iconsOut\wand.ico"
+$svgIco         = "$iconsOut\svg-to-png.ico"
+$descriptionIco = "$iconsOut\video-description.ico"
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"                        $wrenchIco
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"                          $filmIco
+ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"                         $pictureIco
+ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"                          $worldIco
+ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"                   $linkPageIco
+ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"                $titlesIco
+ConvertTo-Ico "$RepoDir\tools\generate-from-image\icons\wand.png"                $wandIco
+ConvertTo-Ico "$RepoDir\tools\svg-to-png\icons\svg-to-png.png"                   $svgIco
+ConvertTo-Ico "$RepoDir\tools\video-description\icons\video-description.png"     $descriptionIco
 Write-Host "  [ico]  Icons written to $iconsOut" -ForegroundColor Green
 
 # --- transcribe + vid2md: video file extensions ---
@@ -282,9 +292,10 @@ $videoExts = @('.mp4', '.mkv', '.avi', '.mov', '.wmv', '.webm', '.m4v', '.mpg', 
 foreach ($ext in $videoExts) {
     $root = "HKCU:\Software\Classes\SystemFileAssociations\$ext\shell\MikesTools"
     Set-MikesToolsRoot $root $wrenchIco
-    Add-MikesVerb $root "Transcribe"   "Transcribe Video"   $filmIco     'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
-    Add-MikesVerb $root "VideoTitles" "Video Titles"      $titlesIco   'cmd.exe /k ""C:\dev\tools\video-titles.bat" "%1""'
-    Add-MikesVerb $root "Vid2md"      "Video to Markdown" $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
+    Add-MikesVerb $root "Transcribe"        "Transcribe Video"    $filmIco        'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
+    Add-MikesVerb $root "VideoTitles"      "Video Titles"        $titlesIco      'cmd.exe /k ""C:\dev\tools\video-titles.bat" "%1""'
+    Add-MikesVerb $root "VideoDescription" "Video Description"   $descriptionIco 'cmd.exe /k ""C:\dev\tools\video-description.bat" "%1""'
+    Add-MikesVerb $root "Vid2md"           "Video to Markdown"   $linkPageIco    "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
 }
 
 # --- removebg: image file extensions ---
@@ -312,14 +323,16 @@ $vid2mdCmd = "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyl
 # Directory - right-clicking a folder item; %1 = folder path
 $dirRoot = "HKCU:\Software\Classes\Directory\shell\MikesTools"
 Set-MikesToolsRoot $dirRoot $wrenchIco
-Add-MikesVerb $dirRoot "GhOpen" "Open on GitHub"   $worldIco  'cmd.exe /k "cd /d "%1" && "C:\dev\tools\ghopen.bat""'
-Add-MikesVerb $dirRoot "Vid2md" "Video to Markdown" $linkPageIco $vid2mdCmd
+Add-MikesVerb $dirRoot "GhOpen"           "Open on GitHub"     $worldIco       'cmd.exe /k "cd /d "%1" && "C:\dev\tools\ghopen.bat""'
+Add-MikesVerb $dirRoot "VideoDescription" "Video Description"  $descriptionIco 'cmd.exe /k ""C:\dev\tools\video-description.bat" "%1""'
+Add-MikesVerb $dirRoot "Vid2md"           "Video to Markdown"  $linkPageIco    $vid2mdCmd
 
 # Directory\Background - right-clicking inside an open folder; %V = current folder
 $bgRoot = "HKCU:\Software\Classes\Directory\Background\shell\MikesTools"
 Set-MikesToolsRoot $bgRoot $wrenchIco
-Add-MikesVerb $bgRoot "GhOpen" "Open on GitHub"   $worldIco  'cmd.exe /k "cd /d "%V" && "C:\dev\tools\ghopen.bat""'
-Add-MikesVerb $bgRoot "Vid2md" "Video to Markdown" $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`""
+Add-MikesVerb $bgRoot "GhOpen"           "Open on GitHub"     $worldIco       'cmd.exe /k "cd /d "%V" && "C:\dev\tools\ghopen.bat""'
+Add-MikesVerb $bgRoot "VideoDescription" "Video Description"  $descriptionIco 'cmd.exe /k ""C:\dev\tools\video-description.bat" "%V""'
+Add-MikesVerb $bgRoot "Vid2md"           "Video to Markdown"  $linkPageIco    "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`""
 
 # --- vid2md: all files and folders via AllFilesystemObjects ---
 # AllFilesystemObjects is a Windows shell class that matches every file and folder.
