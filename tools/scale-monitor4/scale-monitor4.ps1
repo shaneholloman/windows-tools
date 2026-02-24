@@ -61,7 +61,7 @@ $current = (Get-ItemProperty -Path $regKey -Name DpiValue).DpiValue
 # --- Build the popup ---
 $form = New-Object System.Windows.Forms.Form
 $form.Text            = "Monitor 4 Scale"
-$form.Size            = New-Object System.Drawing.Size(260, 140)
+$form.Size            = New-Object System.Drawing.Size(260, 200)
 $form.StartPosition   = "Manual"
 $form.FormBorderStyle = "FixedSingle"
 $form.MaximizeBox     = $false
@@ -79,16 +79,16 @@ $form.Location = New-Object System.Drawing.Point(
 )
 
 $label = New-Object System.Windows.Forms.Label
-$label.Text      = if ($current -eq 7) { "Currently: 300%  (filming)" } else { "Currently: 200%  (normal)" }
+$label.Text      = if ($current -eq 7) { "Currently: 300%  (filming)" } elseif ($current -eq 8) { "Currently: 350%" } elseif ($current -eq 9) { "Currently: 400%" } else { "Currently: 200%  (normal)" }
 $label.Location  = New-Object System.Drawing.Point(16, 14)
 $label.Size      = New-Object System.Drawing.Size(220, 20)
 $label.ForeColor = [System.Drawing.Color]::FromArgb(180, 180, 180)
 $form.Controls.Add($label)
 
-function Make-Button($text, $x, $active) {
+function Make-Button($text, $x, $y, $active) {
     $btn = New-Object System.Windows.Forms.Button
     $btn.Text      = $text
-    $btn.Location  = New-Object System.Drawing.Point($x, 48)
+    $btn.Location  = New-Object System.Drawing.Point($x, $y)
     $btn.Size      = New-Object System.Drawing.Size(104, 44)
     $btn.FlatStyle = "Flat"
     $btn.FlatAppearance.BorderSize = 1
@@ -105,21 +105,20 @@ function Make-Button($text, $x, $active) {
     return $btn
 }
 
-$btn200 = Make-Button "200%`nNormal" 16  ($current -eq 4)
-$btn300 = Make-Button "300%`nFilming" 130 ($current -eq 7)
+$btn200 = Make-Button "200%`nNormal"  16 48  ($current -eq 4)
+$btn300 = Make-Button "300%`nFilming" 130 48 ($current -eq 7)
+$btn350 = Make-Button "350%"          16 100 ($current -eq 8)
+$btn400 = Make-Button "400%"          130 100 ($current -eq 9)
 
-$btn200.Add_Click({
-    Apply-Scale 4
-    $form.Close()
-})
-
-$btn300.Add_Click({
-    Apply-Scale 7
-    $form.Close()
-})
+$btn200.Add_Click({ Apply-Scale 4; $form.Close() })
+$btn300.Add_Click({ Apply-Scale 7; $form.Close() })
+$btn350.Add_Click({ Apply-Scale 8; $form.Close() })
+$btn400.Add_Click({ Apply-Scale 9; $form.Close() })
 
 $form.Controls.Add($btn200)
 $form.Controls.Add($btn300)
+$form.Controls.Add($btn350)
+$form.Controls.Add($btn400)
 
 # Close on Escape or clicking outside
 $form.Add_Deactivate({ $form.Close() })
