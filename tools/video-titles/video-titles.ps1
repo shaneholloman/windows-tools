@@ -51,12 +51,12 @@ A great title usually combines two or more of these four pillars: The Hook, The 
 2. Add a Power Word - Unbelievable, Finally, Only, Dead, Toxic, Dangerous, Game-changing.
 3. Create the Gap - explain the result or feeling, not the full mechanism.
 
-Conversation behavior:
-- Ask clarifying questions when useful.
-- Propose concrete title options with variety across the four pillars.
-- Keep options concise and punchy.
-- Avoid repeating near-identical phrasing.
-- Focus on accuracy - avoid misleading claims.
+Output rules (strictly enforced):
+- Output ONLY the numbered list of titles. Nothing else. No preamble, no commentary, no sign-off.
+- Format: 1. Title Here
+- Plain text only. No markdown, no asterisks, no hashes, no bold, no italics, no bullet points.
+- If the user asks a clarifying question or gives feedback, respond in one short plain-text sentence then immediately output the new list.
+- Keep each title concise and punchy - one line each.
 "@
 
 # ---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ if (-not (Test-Path $VideoPath)) {
 $VideoPath = (Resolve-Path $VideoPath).Path
 $videoDir  = Split-Path $VideoPath
 $videoName = [System.IO.Path]::GetFileNameWithoutExtension($VideoPath)
-$logPath   = Join-Path $videoDir "$videoName-titles.jsonl"
+$logPath   = Join-Path $videoDir "$videoName-titles.txt"
 
 # ---------------------------------------------------------------------------
 # Header
@@ -176,31 +176,41 @@ if (Test-Path $srtPath) {
 }
 
 Write-Separator
-Write-Host "  Type your message and press Enter. Ctrl+Enter sends multi-line." -ForegroundColor DarkGray
-Write-Host "  Type  quit  to exit." -ForegroundColor DarkGray
+Write-Host "  Type your message and press Enter. Type  quit  to exit." -ForegroundColor DarkGray
 Write-Separator
 Write-Host ""
 
 # ---------------------------------------------------------------------------
-# Chat loop
+# Chat helpers
 # ---------------------------------------------------------------------------
 
 $history   = [System.Collections.Generic.List[hashtable]]::new()
 $sessionId = [System.DateTime]::Now.ToString("yyyyMMdd-HHmmss")
 
-while ($true) {
-    Write-Host "  You: " -ForegroundColor Cyan -NoNewline
-    $userInput = (Read-Host).Trim()
+# Parse an existing log file back into conversation history
+function Import-ChatLog([string]$path) {
+    $result = [System.Collections.Generic.List[hashtable]]::new()
+    if (-not (Test-Path $path)) { return $result }
 
-    if (-not $userInput) { continue }
-    if ($userInput -in @('quit', 'exit', 'q', ':q')) {
-        Write-Host ""
-        Write-Host "  Bye." -ForegroundColor DarkGray
-        Write-Host ""
-        break
+    $content  = Get-Content $path -Raw -Encoding UTF8
+    $sep      = '------------------------------------------------------------'
+    $blocks   = $content -split [regex]::Escape($sep) | Where-Object { $_.Trim() }
+
+    foreach ($block in $blocks) {
+        if ($block -notmatch '(?m)^You: (.+)$')       { continue }
+        $userMsg = $Matches[1].Trim()
+
+        if ($block -notmatch '(?s)Gemini:\r?\n(.+)')  { continue }
+        $assistantMsg = $Matches[1].Trim()
+
+        $result.Add(@{ role = "user";      content = $userMsg      })
+        $result.Add(@{ role = "assistant"; content = $assistantMsg })
     }
 
-    # Build messages array
+    return $result
+}
+
+function Send-Message([string]$userInput) {
     $messages = [System.Collections.Generic.List[object]]::new()
     $messages.Add([pscustomobject]@{ role = "system"; content = $SYSTEM_PROMPT })
 
@@ -224,7 +234,7 @@ while ($true) {
             model       = $MODEL
             messages    = @($messages)
             temperature = 0.8
-            max_tokens  = 1200
+            max_tokens  = 8000
         } | ConvertTo-Json -Depth 10 -Compress
 
         $response = Invoke-RestMethod `
@@ -252,14 +262,18 @@ while ($true) {
         Write-Separator
         Write-Host ""
 
-        # Append exchange to JSONL log
-        $logEntry = [pscustomobject]@{
-            session   = $sessionId
-            timestamp = [System.DateTime]::UtcNow.ToString("o")
-            video     = $VideoPath
-            user      = $userInput
-            assistant = $reply
-        } | ConvertTo-Json -Compress
+        # Append exchange to plain text log
+        $timestamp = [System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss")
+        $logEntry  = @"
+
+[$timestamp]
+You: $userInput
+
+Gemini:
+$reply
+
+------------------------------------------------------------
+"@
         Add-Content -Path $logPath -Value $logEntry -Encoding UTF8
 
     } catch {
@@ -267,4 +281,55 @@ while ($true) {
         Write-Host "  ERROR: $_" -ForegroundColor Red
         Write-Host ""
     }
+}
+
+# ---------------------------------------------------------------------------
+# Load previous session if log exists, otherwise auto-fire opener
+# ---------------------------------------------------------------------------
+
+$loaded = Import-ChatLog $logPath
+
+if ($loaded.Count -gt 0) {
+    # Replay history into the in-memory list
+    foreach ($m in $loaded) { $history.Add($m) }
+
+    $exchangeCount = $loaded.Count / 2
+    Write-Host "  Resumed: $exchangeCount previous exchange(s) loaded." -ForegroundColor DarkGray
+    Write-Host ""
+
+    # Show the last exchange so the user sees where they left off
+    $lastUser      = $loaded[$loaded.Count - 2].content
+    $lastAssistant = $loaded[$loaded.Count - 1].content
+    Write-Host "  You: $lastUser" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  Gemini:" -ForegroundColor Green
+    Write-Host ""
+    Write-Reply $lastAssistant
+    Write-Host ""
+    Write-Separator
+    Write-Host ""
+} else {
+    # Fresh session - fire the opening prompt automatically
+    Write-Host "  You: " -ForegroundColor Cyan -NoNewline
+    Write-Host "Please give me 10 options" -ForegroundColor DarkGray
+    Send-Message "Please give me 10 options"
+}
+
+# ---------------------------------------------------------------------------
+# Chat loop
+# ---------------------------------------------------------------------------
+
+while ($true) {
+    Write-Host "  You: " -ForegroundColor Cyan -NoNewline
+    $userInput = (Read-Host).Trim()
+
+    if (-not $userInput) { continue }
+    if ($userInput -in @('quit', 'exit', 'q', ':q')) {
+        Write-Host ""
+        Write-Host "  Bye." -ForegroundColor DarkGray
+        Write-Host ""
+        break
+    }
+
+    Send-Message $userInput
 }
