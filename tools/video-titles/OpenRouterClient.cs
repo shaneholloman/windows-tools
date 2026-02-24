@@ -79,30 +79,22 @@ Conversation behavior:
     static readonly JavaScriptSerializer _jss = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
     // Sends the full conversation to OpenRouter and returns the assistant reply.
-    // transcript and notes are injected as an initial user context turn.
+    // transcript is injected as an initial user context turn if provided.
     public static async Task<string> ChatAsync(
         string transcript,
-        string notes,
         IList<ChatMessage> history,
         string apiKey)
     {
-        // Build the messages array
         var messages = new List<object>();
 
         // System message
         messages.Add(new { role = "system", content = SystemPrompt });
 
-        // Context block (transcript + notes) as first user turn, if provided
-        var contextParts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(transcript))
-            contextParts.Add("Transcript:\n" + transcript.Trim());
-        if (!string.IsNullOrWhiteSpace(notes))
-            contextParts.Add("Creator notes:\n" + notes.Trim());
-
-        if (contextParts.Count > 0) {
+        // Transcript context as the first user turn
+        if (!string.IsNullOrWhiteSpace(transcript)) {
             messages.Add(new {
                 role    = "user",
-                content = "Use this context for the full conversation:\n\n" + string.Join("\n\n", contextParts)
+                content = "Use this transcript as context for the full conversation:\n\n" + transcript.Trim()
             });
         }
 
