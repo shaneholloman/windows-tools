@@ -1,15 +1,36 @@
-# neutralinojs-minimal
+# ![](icons/video-titles.png) video-titles
 
-The default template for a Neutralinojs app. It's possible to use your favorite frontend framework by using [these steps](https://neutralino.js.org/docs/getting-started/using-frontend-libraries).
+Interactive CLI chat tool for brainstorming YouTube video titles. Uses the Compelling Title Matrix framework as a system prompt and chats with Gemini via OpenRouter. Auto-detects (or generates) a transcript, then drops you into a back-and-forth chat session. Every exchange is logged to a `.jsonl` file next to the video.
 
-## Contributors
+## Usage
 
-[![Contributors](https://contrib.rocks/image?repo=neutralinojs/neutralinojs-minimal)](https://github.com/neutralinojs/neutralinojs-minimal/graphs/contributors)
+**From File Explorer:**
+Right-click any video file, choose **Mike's Tools > Video Titles**.
+(On Windows 11, click "Show more options" first.)
 
-## License
+**From the terminal:**
+```
+video-titles <video_file>
+```
 
-[MIT](LICENSE)
+On launch the tool:
+1. Looks for a `<videoname>.srt` alongside the video and loads it as context.
+2. If no SRT exists, offers to run the `transcribe` tool to generate one.
+3. Drops into an interactive chat. Type a message and press Enter to send.
+4. Type `quit` to exit.
 
-## Icon credits
+Each exchange is appended as a JSON line to `<videoname>-titles.jsonl` in the same folder as the video.
 
-- `trayIcon.png` - Made by [Freepik](https://www.freepik.com) and downloaded from [Flaticon](https://www.flaticon.com)
+## Dependencies
+
+| Requirement | Notes |
+|---|---|
+| `OPENROUTER_API_KEY` | Set in `.env` at the repo root. Get a key at https://openrouter.ai/keys |
+| `transcribe` tool | Only needed if you want auto-generated transcripts (optional) |
+
+No npm, no binaries - just PowerShell and an API key.
+
+## Model
+
+Uses `google/gemini-3.1-pro-preview` via the OpenRouter API (`https://openrouter.ai/api/v1/chat/completions`).
+To change the model, edit the `$MODEL` constant at the top of `video-titles.ps1`.

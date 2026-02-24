@@ -144,6 +144,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -Sta -File "$RepoDir\tools\vid2md\
 "@
 
 # ---------------------------------------------------------------------------
+# video-titles — CLI title brainstorming chat tool
+# ---------------------------------------------------------------------------
+Write-BatStub "video-titles" @"
+@echo off
+powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\tools\video-titles\video-titles.ps1" %*
+"@
+
+# ---------------------------------------------------------------------------
 # scale-monitor4 — taskbar shortcut (no bat stub needed; launched via shortcut)
 # ---------------------------------------------------------------------------
 $vbsPath      = "$RepoDir\tools\scale-monitor4\scale-monitor4.vbs"
@@ -255,7 +263,7 @@ foreach ($ext in $videoExts) {
     $root = "HKCU:\Software\Classes\SystemFileAssociations\$ext\shell\MikesTools"
     Set-MikesToolsRoot $root $wrenchIco
     Add-MikesVerb $root "Transcribe"   "Transcribe Video"   $filmIco     'cmd.exe /k ""C:\dev\tools\transcribe.bat" "%1""'
-    Add-MikesVerb $root "VideoTitles" "Video Titles"      $titlesIco   "wscript.exe `"$RepoDir\tools\video-titles\video-titles.vbs`" `"%1`""
+    Add-MikesVerb $root "VideoTitles" "Video Titles"      $titlesIco   'cmd.exe /k ""C:\dev\tools\video-titles.bat" "%1""'
     Add-MikesVerb $root "Vid2md"      "Video to Markdown" $linkPageIco "powershell.exe -NoProfile -ExecutionPolicy Bypass -Sta -WindowStyle Hidden -File `"$RepoDir\tools\vid2md\vid2md.ps1`" `"%1`""
 }
 

@@ -1,13 +1,7 @@
-# Developer tools' files
-.lite_workspace.lua
+# Chat logs are saved next to the user's videos, not in the repo
+*-titles.jsonl
 
-# Neutralinojs binaries and builds
-/bin
-/dist
-
-# Neutralinojs client (minified)
-neutralino.js
-
-# Neutralinojs related files
-.storage
-*.log
+# Leftover Neutralinojs files (deleted - ignored in case of stale local copies)
+/frontend/
+/resources/
+/bin/
