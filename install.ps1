@@ -152,6 +152,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\tools\video-titles
 "@
 
 # ---------------------------------------------------------------------------
+# generate-from-image — AI image generation from a right-clicked image
+# ---------------------------------------------------------------------------
+Write-BatStub "generate-from-image" @"
+@echo off
+bun run "$RepoDir\tools\generate-from-image\index.ts" %*
+"@
+
+# ---------------------------------------------------------------------------
+# svg-to-png — render SVG to PNG, smallest dimension >= 2048px
+# ---------------------------------------------------------------------------
+Write-BatStub "svg-to-png" @"
+@echo off
+bun run "$RepoDir\tools\svg-to-png\svg-to-png.ts" %*
+"@
+
+# ---------------------------------------------------------------------------
 # scale-monitor4 — taskbar shortcut (no bat stub needed; launched via shortcut)
 # ---------------------------------------------------------------------------
 $vbsPath      = "$RepoDir\tools\scale-monitor4\scale-monitor4.vbs"
@@ -249,12 +265,16 @@ $pictureIco  = "$iconsOut\removebg.ico"
 $worldIco    = "$iconsOut\ghopen.ico"
 $linkPageIco = "$iconsOut\vid2md.ico"
 $titlesIco   = "$iconsOut\video-titles.ico"
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"             $wrenchIco
-ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"               $filmIco
-ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"              $pictureIco
-ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"               $worldIco
-ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"        $linkPageIco
-ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"     $titlesIco
+$wandIco     = "$iconsOut\wand.ico"
+$svgIco      = "$iconsOut\svg-to-png.ico"
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"                     $wrenchIco
+ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"                       $filmIco
+ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"                      $pictureIco
+ConvertTo-Ico "$RepoDir\tools\ghopen\icons\world_go.png"                       $worldIco
+ConvertTo-Ico "$RepoDir\tools\vid2md\icons\page_white_link.png"                $linkPageIco
+ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"             $titlesIco
+ConvertTo-Ico "$RepoDir\tools\generate-from-image\icons\wand.png"             $wandIco
+ConvertTo-Ico "$RepoDir\tools\svg-to-png\icons\svg-to-png.png"                $svgIco
 Write-Host "  [ico]  Icons written to $iconsOut" -ForegroundColor Green
 
 # --- transcribe + vid2md: video file extensions ---
@@ -272,8 +292,14 @@ $imageExts = @('.jpg', '.jpeg', '.png', '.webp', '.bmp', '.tiff', '.tif')
 foreach ($ext in $imageExts) {
     $root = "HKCU:\Software\Classes\SystemFileAssociations\$ext\shell\MikesTools"
     Set-MikesToolsRoot $root $wrenchIco
-    Add-MikesVerb $root "RemoveBg" "Remove Background" $pictureIco 'cmd.exe /k ""C:\dev\tools\removebg.bat" "%1""'
+    Add-MikesVerb $root "RemoveBg"           "Remove Background"    $pictureIco 'cmd.exe /k ""C:\dev\tools\removebg.bat" "%1""'
+    Add-MikesVerb $root "GenerateFromImage" "Generate from Image"  $wandIco    'cmd.exe /k ""C:\dev\tools\generate-from-image.bat" "%1""'
 }
+
+# --- svg-to-png: SVG files ---
+$svgRoot = "HKCU:\Software\Classes\SystemFileAssociations\.svg\shell\MikesTools"
+Set-MikesToolsRoot $svgRoot $wrenchIco
+Add-MikesVerb $svgRoot "SvgToPng" "Render to PNG (2048px min)" $svgIco 'cmd.exe /k ""C:\dev\tools\svg-to-png.bat" "%1""'
 
 # --- vid2md: Internet Shortcut files (.url) - YouTube links ---
 $urlRoot = "HKCU:\Software\Classes\SystemFileAssociations\.url\shell\MikesTools"
