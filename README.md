@@ -36,6 +36,7 @@ If you want to use any of this, the recommended approach is:
 | <img src="tools/taskmon/icons/chart_bar.png"> [taskmon](tools/taskmon/README.md) | Taskbar | Real-time NET/CPU/GPU/MEM sparklines overlaid on the taskbar |
 | <img src="tools/voice-type/icons/sound.png"> [voice-type](tools/voice-type/README.md) | Taskbar | Push-to-talk local voice transcription - hold Right Ctrl, speak, release to paste |
 | <img src="tools/video-titles/icons/video-titles.png"> [video-titles](tools/video-titles/) | Context menu | Chat with an AI agent to ideate YouTube titles using the Compelling Title Matrix; right-click any video in Explorer (requires `OPENROUTER_API_KEY` in `.env`) |
+| <img src="tools/svg-to-png/icons/svg-to-png.png"> [svg-to-png](tools/svg-to-png/) | Context menu | Render an SVG to PNG at high resolution; right-click any `.svg` file in Explorer; output is always at least 2048px on its smallest dimension |
 
 ---
 

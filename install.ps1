@@ -148,7 +148,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Sta -File "$RepoDir\tools\vid2md\
 # ---------------------------------------------------------------------------
 Write-BatStub "video-titles" @"
 @echo off
-powershell -NoProfile -ExecutionPolicy Bypass -File "$RepoDir\tools\video-titles\video-titles.ps1" %*
+bun run "$RepoDir\tools\video-titles\index.ts" %*
 "@
 
 # ---------------------------------------------------------------------------
