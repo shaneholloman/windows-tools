@@ -1,15 +1,12 @@
 # video-titles.ps1 - Title ideation chat tool launcher
 #
-# Loads the pre-built DLL and opens the chat UI.
-# Accepts an optional video file path; if found, auto-loads the matching .srt.
+# Loads .env from the repo root, sets environment variables, then starts
+# the Neutralinojs desktop app. The JS frontend reads OPENROUTER_API_KEY
+# and VIDEO_TITLES_PATH via Neutralino.os.getEnv().
 #
-# First-time setup:
-#   1. Run build.bat to compile the DLL
-#   2. Run install.ps1 to register the context menu entry
-#   3. Right-click a video file -> Mike's Tools -> Video Titles
-#
-# After any code change to *.cs files:
-#   1. Run build.bat (or build-and-run.bat for a one-shot dev cycle)
+# Usage:
+#   video-titles.ps1                    # open with no video
+#   video-titles.ps1 "C:\video.mp4"     # open and auto-load transcript
 
 param([string]$VideoPath = "")
 
@@ -25,20 +22,22 @@ if (Test-Path $dotEnv) {
     }
 }
 
-Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName System.Drawing
+# Pass video path via environment variable so Neutralinojs can read it
+if ($VideoPath) {
+    [System.Environment]::SetEnvironmentVariable('VIDEO_TITLES_PATH', $VideoPath, 'Process')
+}
 
-$dll = Join-Path $env:LOCALAPPDATA 'video-titles\video-titles.dll'
+$exe = Join-Path $PSScriptRoot 'bin\neutralino-win_x64.exe'
 
-if (-not (Test-Path $dll)) {
-    $buildBat = Join-Path $PSScriptRoot 'build.bat'
+if (-not (Test-Path $exe)) {
+    Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.MessageBox]::Show(
-        "video-titles has not been built yet.`n`nPlease run build.bat first:`n`n  $buildBat`n`nThis only needs to be done once (and again after code changes).",
-        'video-titles - not built',
+        "Neutralinojs binary not found.`n`nRun 'neu update' in the video-titles folder to download it.`n`n  cd $PSScriptRoot`n  neu update",
+        'video-titles - binary missing',
         [System.Windows.Forms.MessageBoxButtons]::OK,
         [System.Windows.Forms.MessageBoxIcon]::Warning) | Out-Null
     exit
 }
 
-[System.Reflection.Assembly]::LoadFrom($dll) | Out-Null
-[VideoTitles.App]::Run($VideoPath, $PSScriptRoot)
+# Start the Neutralinojs app (--load-dir-res loads resources from disk, no build needed)
+& $exe --load-dir-res --path="$PSScriptRoot"

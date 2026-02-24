@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Titles</title>
+  <link rel="stylesheet" href="/styles.css">
+  <!-- marked.js for markdown rendering in chat -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Left sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">✦</span>
+        <span class="logo-text">Video<br>Titles</span>
+      </div>
+      <div class="nav-items">
+        <button class="nav-btn" id="nav-chat"       data-section="chat"       title="Chat">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Chat</span>
+        </button>
+        <button class="nav-btn" id="nav-transcript" data-section="transcript" title="Transcript">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">Transcript</span>
+        </button>
+        <button class="nav-btn" id="nav-video"      data-section="video"      title="Video">
+          <span class="nav-icon">🎬</span>
+          <span class="nav-label">Video</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main content area -->
+    <main class="content">
+
+      <!-- Chat section (default) -->
+      <section id="section-chat" class="section active">
+        <div class="chat-history" id="chat-history"></div>
+        <div class="input-bar">
+          <div class="input-wrap">
+            <textarea
+              id="message-input"
+              placeholder="Message..."
+              rows="2"
+            >Please give me 10 options</textarea>
+          </div>
+          <button class="send-btn" id="send-btn">Send</button>
+        </div>
+        <div class="status-bar" id="status-bar">Ctrl+Enter to send</div>
+      </section>
+
+      <!-- Transcript section -->
+      <section id="section-transcript" class="section">
+        <div class="section-header">
+          <h2>Transcript</h2>
+          <div class="section-actions">
+            <button class="action-btn" id="load-srt-btn">Load .srt file...</button>
+            <button class="action-btn" id="clear-transcript-btn">Clear</button>
+          </div>
+        </div>
+        <textarea
+          id="transcript-input"
+          class="transcript-textarea"
+          placeholder="Paste transcript here, or use 'Load .srt file...' to load from a file.&#10;If you right-clicked a video that already has a matching .srt, it was auto-loaded."
+          spellcheck="false"
+        ></textarea>
+      </section>
+
+      <!-- Video section -->
+      <section id="section-video" class="section">
+        <div class="section-header">
+          <h2>Video</h2>
+        </div>
+        <div class="video-info-card">
+          <div class="info-row">
+            <span class="info-label">File</span>
+            <span class="info-value" id="video-path-display">No video selected</span>
+          </div>
+          <div class="info-row" id="srt-row" style="display:none">
+            <span class="info-label">Transcript</span>
+            <span class="info-value srt-ok" id="srt-status-display"></span>
+          </div>
+          <button class="action-btn primary-btn" id="change-video-btn">Change video...</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/js/neutralino.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

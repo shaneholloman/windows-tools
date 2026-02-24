@@ -1,12 +1,13 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
-echo Stopping any running video-titles instance...
-call "%~dp0kill.bat"
+where neu >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ERROR: neu CLI not found. Install with: npm install -g @neutralinojs/neu
+    pause
+    exit /b 1
+)
 
-call "%~dp0build.bat"
-if %errorlevel% neq 0 exit /b 1
-
-echo.
-echo Launching video-titles...
-wscript.exe "%~dp0video-titles.vbs"
+echo Starting video-titles in dev mode (hot reload)...
+neu run

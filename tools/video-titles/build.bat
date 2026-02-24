@@ -1,24 +1,23 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
-set MSBUILD=C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe
-if not exist "%MSBUILD%" (
-    echo ERROR: MSBuild not found.
-    echo Expected: %MSBUILD%
+where neu >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ERROR: neu CLI not found.
+    echo Install it with: npm install -g @neutralinojs/neu
     pause
     exit /b 1
 )
 
-echo Building video-titles.csproj ...
-"%MSBUILD%" "%~dp0video-titles.csproj" /nologo /v:minimal /p:Configuration=Release
+echo Building video-titles...
+neu build
 
 if %errorlevel% neq 0 (
-    echo.
-    echo Build FAILED. See errors above.
+    echo Build FAILED.
     pause
     exit /b 1
 )
 
 echo.
-echo Build succeeded: %LOCALAPPDATA%\video-titles\video-titles.dll
-echo You can now launch video-titles via video-titles.vbs
+echo Build succeeded: dist\video-titles\
