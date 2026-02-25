@@ -26,7 +26,7 @@ If you want to use any of this, the recommended approach is:
 
 | Name | Type | Description |
 |---|---|---|
-| <img src="tools/transcribe/icons/film.png"> [transcribe](tools/transcribe/README.md) | CLI + context menu | Extract audio from a video and transcribe it via faster-whisper (CUDA with CPU fallback); right-click any video file in Explorer |
+| <img src="tools/transcribe/docs/header.png" width="220"><br>[transcribe](tools/transcribe/README.md) | CLI + context menu | Extract audio from a video and transcribe it via faster-whisper (CUDA with CPU fallback); right-click any video file in Explorer |
 | <img src="tools/video-to-markdown/icons/page_white_link.png"> [video-to-markdown](tools/video-to-markdown/README.md) | CLI + context menu | Convert a YouTube URL to a markdown image-link and copy it to clipboard; right-click any `.url` Internet Shortcut in Explorer |
 | <img src="tools/removebg/icons/picture.png"> [removebg](tools/removebg/README.md) | CLI + context menu | Remove the background from an image using rembg / birefnet-portrait; right-click any image file in Explorer |
 | <img src="tools/ghopen/icons/world_go.png"> [ghopen](tools/ghopen/README.md) | CLI + context menu | Open the current repo on GitHub; opens the PR page if on a PR branch; right-click any folder in Explorer |
@@ -39,6 +39,7 @@ If you want to use any of this, the recommended approach is:
 | <img src="tools/video-description/icons/video-description.png"> [video-description](tools/video-description/README.md) | CLI + context menu | Generate a YouTube description via Gemini; auto-loads or generates a transcript, then drops into an interactive chat for revisions; right-click any video in Explorer (requires `OPENROUTER_API_KEY` in `.env`) |
 | <img src="tools/generate-from-image/icons/wand.png"> [generate-from-image](tools/generate-from-image/README.md) | Context menu | AI image generation from a reference image; right-click any image in Explorer, describe what you want, and Gemini generates a new image (requires `OPENROUTER_API_KEY` in `.env`) |
 | <img src="tools/svg-to-png/icons/svg-to-png.png"> [svg-to-png](tools/svg-to-png/) | Context menu | Render an SVG to PNG at high resolution; right-click any `.svg` file in Explorer; output is always at least 2048px on its smallest dimension |
+| <img src="tools/img-to-svg/icons/img-to-svg.png"> [img-to-svg](tools/img-to-svg/) | CLI + context menu | Convert a raster image to SVG vector using vtracer; right-click any image file in Explorer |
 | <img src="tools/copypath/icons/page_copy.png"> [copypath](tools/copypath/README.md) | CLI | Copy the absolute path of a file or folder to the clipboard; defaults to the current directory if no argument given |
 
 ---

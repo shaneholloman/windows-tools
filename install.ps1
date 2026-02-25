@@ -176,6 +176,14 @@ bun run "$RepoDir\tools\svg-to-png\svg-to-png.ts" %*
 "@
 
 # ---------------------------------------------------------------------------
+# img-to-svg — convert raster image to SVG vector using vtracer
+# ---------------------------------------------------------------------------
+Write-BatStub "img-to-svg" @"
+@echo off
+call "$RepoDir\tools\img-to-svg\img-to-svg.bat" %*
+"@
+
+# ---------------------------------------------------------------------------
 # scale-monitor — taskbar shortcut (no bat stub needed; launched via shortcut)
 # ---------------------------------------------------------------------------
 $vbsPath      = "$RepoDir\tools\scale-monitor\scale-monitor.vbs"
@@ -297,6 +305,7 @@ $titlesIco      = "$iconsOut\video-titles.ico"
 $wandIco        = "$iconsOut\wand.ico"
 $svgIco         = "$iconsOut\svg-to-png.ico"
 $descriptionIco = "$iconsOut\video-description.ico"
+$imgToSvgIco    = "$iconsOut\img-to-svg.ico"
 ConvertTo-Ico "$RepoDir\tools\transcribe\icons\wrench.png"                        $wrenchIco
 ConvertTo-Ico "$RepoDir\tools\transcribe\icons\film.png"                          $filmIco
 ConvertTo-Ico "$RepoDir\tools\removebg\icons\picture.png"                         $pictureIco
@@ -306,6 +315,7 @@ ConvertTo-Ico "$RepoDir\tools\video-titles\icons\video-titles.png"              
 ConvertTo-Ico "$RepoDir\tools\generate-from-image\icons\wand.png"                $wandIco
 ConvertTo-Ico "$RepoDir\tools\svg-to-png\icons\svg-to-png.png"                   $svgIco
 ConvertTo-Ico "$RepoDir\tools\video-description\icons\video-description.png"     $descriptionIco
+ConvertTo-Ico "$RepoDir\tools\img-to-svg\icons\img-to-svg.png"                   $imgToSvgIco
 Write-Host "  [ico]  Icons written to $iconsOut" -ForegroundColor Green
 
 # --- transcribe + vid2md: video file extensions ---
@@ -326,6 +336,7 @@ foreach ($ext in $imageExts) {
     Set-MikesToolsRoot $root $wrenchIco
     Add-MikesVerb $root "RemoveBg"           "Remove Background"    $pictureIco 'cmd.exe /k ""C:\dev\tools\removebg.bat" "%1""'
     Add-MikesVerb $root "GenerateFromImage" "Generate from Image"  $wandIco    'cmd.exe /k ""C:\dev\tools\generate-from-image.bat" "%1""'
+    Add-MikesVerb $root "ImgToSvg"          "Convert to SVG"       $imgToSvgIco 'cmd.exe /k ""C:\dev\tools\img-to-svg.bat" "%1""'
 }
 
 # --- svg-to-png: SVG files ---
