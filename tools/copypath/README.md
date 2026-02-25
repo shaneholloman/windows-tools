@@ -1,6 +1,6 @@
-![copypath screenshot](docs/ss1.png)
+![header](docs/header.png)
 
-# copypath
+# ![](icons/page_copy.png) copypath
 
 Copies the absolute path of a file, folder, or the current directory to the clipboard.
 

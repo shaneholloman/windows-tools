@@ -40,7 +40,7 @@ If you want to use any of this, the recommended approach is:
 | <img src="tools/generate-from-image/icons/wand.png"> [generate-from-image](tools/generate-from-image/README.md) | Context menu | AI image generation from a reference image; right-click any image in Explorer, describe what you want, and Gemini generates a new image (requires `OPENROUTER_API_KEY` in `.env`) |
 | <img src="tools/svg-to-png/icons/svg-to-png.png"> [svg-to-png](tools/svg-to-png/) | Context menu | Render an SVG to PNG at high resolution; right-click any `.svg` file in Explorer; output is always at least 2048px on its smallest dimension |
 | <img src="tools/img-to-svg/icons/img-to-svg.png"> [img-to-svg](tools/img-to-svg/) | CLI + context menu | Convert a raster image to SVG vector using vtracer; right-click any image file in Explorer |
-| <img src="tools/copypath/icons/page_copy.png"> [copypath](tools/copypath/README.md) | CLI | Copy the absolute path of a file or folder to the clipboard; defaults to the current directory if no argument given |
+| <img src="tools/copypath/docs/header.png" width="220"><br>[copypath](tools/copypath/README.md) | CLI | Copy the absolute path of a file or folder to the clipboard; defaults to the current directory if no argument given |
 
 ---
 
