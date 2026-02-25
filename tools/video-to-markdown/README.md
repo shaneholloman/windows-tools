@@ -1,4 +1,4 @@
-![alt text](docs/ss1.png) ![alt text](docs/ss2.png)
+![header](docs/header.png)
 
 # video-to-markdown
 

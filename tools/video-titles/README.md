@@ -1,8 +1,6 @@
-![video-titles screenshot](docs/ss1.png)
+![header](docs/header.png)
 
 # ![](icons/video-titles.png) video-titles
-
-![alt text](docs/ss1.png)
 
 Interactive CLI chat tool for brainstorming YouTube video titles. Uses the Compelling Title Matrix framework as a system prompt and chats with Gemini via OpenRouter. Auto-detects (or generates) a transcript, then drops you into a back-and-forth chat session. Every exchange is logged to a `.jsonl` file next to the video.
 

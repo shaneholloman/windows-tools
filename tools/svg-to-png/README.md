@@ -1,3 +1,5 @@
+![header](docs/header.png)
+
 # ![](icons/svg-to-png.png) svg-to-png
 
 Renders an SVG file to PNG, scaling it up so the smallest dimension is at least 2048px. If the SVG is already 2048px or larger on its shortest side, it renders at natural size.

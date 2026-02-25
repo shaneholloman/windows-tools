@@ -1,6 +1,6 @@
-# ![](icons/wand.png) generate-from-image
+![header](docs/header.png)
 
-![alt text](docs/ss1.png)
+# ![](icons/wand.png) generate-from-image
 
 Interactive CLI tool for AI image generation. Right-click any image in Explorer, describe what you want, and Gemini 3 Pro generates a new image based on your input image and prompt. Each generation is saved as a numbered file alongside the original.
 
