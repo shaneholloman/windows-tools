@@ -4,6 +4,12 @@
 
 Interactive CLI chat tool for generating YouTube video descriptions. Auto-detects (or generates) a transcript, then fires off an initial description request to Gemini and drops you into a back-and-forth chat session. Every exchange is logged to a `.txt` file next to the video so the conversation can be resumed on the next run.
 
+
+## Screenshots
+
+![video-description screenshot](docs/ss1.png)
+
+
 ## Usage
 
 **From File Explorer:**

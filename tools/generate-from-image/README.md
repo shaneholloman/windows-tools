@@ -4,6 +4,12 @@
 
 Interactive CLI tool for AI image generation. Right-click any image in Explorer, describe what you want, and Gemini 3 Pro generates a new image based on your input image and prompt. Each generation is saved as a numbered file alongside the original.
 
+
+## Screenshots
+
+![generate-from-image screenshot](docs/ss1.png)
+
+
 ## Usage
 
 **From File Explorer:**

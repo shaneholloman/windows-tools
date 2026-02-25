@@ -4,6 +4,12 @@
 
 Backs up all photos and videos from an iPhone (over USB/MTP) to a flat folder on disk.
 
+
+## Screenshots
+
+![backup-phone screenshot](docs/ss1.png)
+
+
 ## Usage
 
 ```

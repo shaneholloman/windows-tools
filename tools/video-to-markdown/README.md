@@ -8,6 +8,13 @@ Uses the [video-to-markdown.com](https://video-to-markdown.com) public API. Vide
 
 ---
 
+
+## Screenshots
+
+![video-to-markdown screenshot](docs/ss1.png)
+![video-to-markdown screenshot](docs/ss2.png)
+
+
 ## What it produces
 
 Given a YouTube URL, the tool calls the API and puts something like this on your clipboard:

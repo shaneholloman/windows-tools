@@ -4,6 +4,13 @@
 
 Toggles the DPI scaling of Monitor 4 (HG584T05) between 200% (normal use) and 300% (filming).
 
+
+## Screenshots
+
+![scale-monitor screenshot](docs/ss1.png)
+![scale-monitor screenshot](docs/ss2.png)
+
+
 ## Usage
 
 Click the taskbar shortcut, or run directly:

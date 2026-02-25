@@ -4,6 +4,12 @@
 
 Opens the current git repo on GitHub in the browser. If the current branch has a pull request, it opens the PR page instead of the repo root.
 
+
+## Screenshots
+
+![ghopen screenshot](docs/ss1.png)
+
+
 ## Usage
 
 **From the terminal:**

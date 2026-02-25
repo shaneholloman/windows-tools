@@ -4,6 +4,12 @@
 
 Removes the background from an image using [rembg](https://github.com/danielgatis/rembg) with the `birefnet-portrait` model.
 
+
+## Screenshots
+
+![removebg screenshot](docs/ss1.png)
+
+
 ## Usage
 
 **From the terminal:**
